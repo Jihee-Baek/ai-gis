@@ -1,0 +1,30 @@
+{
+  "system_overview": "",
+  "frontend": {
+    "framework": "",
+    "state_management": "",
+    "map_library": ""
+  },
+  "backend": {
+    "framework": "",
+    "architecture_style": ""
+  },
+  "database": {
+    "type": ""
+  },
+  "modules": [
+    {
+      "name": "",
+      "responsibility": ""
+    }
+  ],
+  "data_flow": [],
+  "apis": [
+    {
+      "method": "",
+      "path": "",
+      "description": ""
+    }
+  ],
+  "deployment_architecture": ""
+}

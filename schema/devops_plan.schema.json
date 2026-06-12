@@ -1,0 +1,27 @@
+{
+  "infrastructure": {
+    "frontend": "",
+    "backend": "",
+    "database": ""
+  },
+  "docker": {
+    "frontend_container": true,
+    "backend_container": true,
+    "docker_compose": true
+  },
+  "cicd": {
+    "provider": "",
+    "jobs": []
+  },
+  "environments": [],
+  "monitoring": {
+    "health_check": true,
+    "application_logs": true,
+    "error_tracking": true
+  },
+  "security": {
+    "secret_management": "",
+    "authentication_strategy": ""
+  },
+  "deployment_strategy": ""
+}

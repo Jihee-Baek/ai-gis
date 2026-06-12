@@ -1,29 +1,70 @@
 {
-  "product_name": "Geo Analyzer",
-
-  "problem_statement": "GIS 툴 사용 경험이 없는 사용자도 GeoJSON을 쉽게 분석할 수 있어야 한다.",
-
+  "product_name": "GeoJSON 기반 GIS 데이터 시각화 및 분석 서비스",
+  "problem_statement": "GIS 비전문가들이 고가의 전문 소프트웨어 없이도 GeoJSON 데이터를 웹상에서 신속하게 시각화하고, 속성 정보를 확인하며, 면적 계산과 같은 기본적인 지리적 분석을 수행할 수 있는 환경이 부족함.",
   "target_users": [
-    "건설 관리자",
-    "GIS 초급 사용자"
+    "도시 계획 및 공공 데이터 분석가",
+    "지리 정보를 활용하는 연구원 및 대학생",
+    "데이터 시각화가 필요한 비즈니스 분석가"
   ],
-
+  "user_personas": [
+    "김철수 (32세, 도시계획 연구원): 다양한 출처의 GeoJSON 데이터를 빠르게 지도상에서 중첩하여 확인하고 면적을 검토해야 함.",
+    "이영희 (28세, 데이터 분석가): 코딩 없이 웹 브라우저에서 바로 지리 데이터의 속성을 파악하고 팀원들과 공유하고 싶어 함."
+  ],
   "features": [
     {
       "id": "F001",
-      "name": "GeoJSON Upload"
+      "name": "GeoJSON 파일 업로드",
+      "description": "사용자가 로컬 기기에서 GeoJSON 파일을 드래그 앤 드롭하거나 선택하여 서버에 업로드하고 지도로 불러오는 기능.",
+      "business_value": "데이터 입력의 편의성을 극대화하여 서비스 접근성을 높임.",
+      "priority": "High"
     },
     {
       "id": "F002",
-      "name": "Map Visualization"
+      "name": "지도 시각화",
+      "description": "업로드된 GeoJSON 데이터를 OpenStreetMap 등의 배경 지도 위에 정확한 좌표로 렌더링하는 기능. 점, 선, 면 객체를 구분하여 표시.",
+      "business_value": "지리 데이터의 공간적 분포를 직관적으로 이해할 수 있게 함.",
+      "priority": "High"
     },
     {
       "id": "F003",
-      "name": "Area Calculation"
+      "name": "속성 조회",
+      "description": "지도상의 특정 객체를 클릭했을 때, GeoJSON의 'properties' 필드에 포함된 상세 속성 정보를 팝업 또는 사이드바 형식으로 노출하는 기능.",
+      "business_value": "데이터에 담긴 구체적인 수치와 정보를 즉각적으로 확인 가능.",
+      "priority": "High"
+    },
+    {
+      "id": "F004",
+      "name": "면적 계산",
+      "description": "업로드된 폴리곤(Polygon) 데이터의 실측 면적을 계산하여 사용자에게 제공하는 기능.",
+      "business_value": "단순 시각화를 넘어 실무적인 분석 가치를 제공함.",
+      "priority": "Medium"
+    },
+    {
+      "id": "F005",
+      "name": "레이어 관리",
+      "description": "업로드된 여러 데이터 파일을 각각의 레이어로 분리하고, 각 레이어의 가시성(On/Off) 및 투명도를 조절하는 기능.",
+      "business_value": "복잡한 데이터를 구조화하여 효율적으로 비교 분석할 수 있게 함.",
+      "priority": "Medium"
     }
   ],
-
+  "non_functional_requirements": [
+    "GeoJSON 파일 업로드 후 2초 이내에 지도 시각화 완료",
+    "최대 10MB 크기의 단일 GeoJSON 파일 지원",
+    "모바일 브라우저에서도 지도를 정상적으로 탐색할 수 있는 반응형 웹 구현"
+  ],
   "success_metrics": [
-    "업로드 후 5초 내 렌더링"
+    "파일 업로드 후 첫 시각화까지의 평균 소요 시간",
+    "일일 활성 사용자 수 (DAU)",
+    "서비스 이용 중 기능 오류 발생률 1% 미만 유지"
+  ],
+  "mvp_scope": [
+    "GeoJSON 단일 파일 업로드 및 지도 표시",
+    "객체 클릭 시 속성 팝업 표시",
+    "기본적인 면적 계산 기능"
+  ],
+  "future_scope": [
+    "SHP, KML 등 다양한 포맷 지원",
+    "데이터 편집 및 수정 기능",
+    "사용자 커스텀 스타일링 (색상, 선 굵기 등)"
   ]
 }

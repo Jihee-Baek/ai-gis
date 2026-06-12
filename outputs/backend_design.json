@@ -1,33 +1,229 @@
 {
+  "folder_structure": [
+	  "app/domain/entities",
+	  "app/domain/repositories",
+
+	  "app/application/services",
+	  "app/application/usecases",
+
+	  "app/infrastructure/db",
+	  "app/infrastructure/storage",
+	  "app/infrastructure/gis",
+
+	  "app/presentation/api/v1",
+
+	  "app/core"
+	],
   "entities": [
     {
-      "name": "GeoFile",
-      "fields": [
-        "id",
-        "file_name",
-        "uploaded_at"
-      ]
+      "name": "User",
+      "description": "시스템 사용자 정보 및 권한 관리",
+      "fields": ["id: UUID", "email: String (Unique)", "hashed_password: String", "is_active: Boolean"]
+    },
+    {
+      "name": "Layer",
+      "description": "사용자가 업로드한 지리 데이터 레이어 메타데이터",
+      "fields": ["id: UUID", "user_id: ForeignKey(User)", "name: String", "file_path: String (S3 경로)", "created_at: DateTime"]
+    },
+    {
+      "name": "Feature",
+      "description": "레이어에 포함된 개별 지리 객체 (점, 선, 면)",
+      "fields": ["id: UUID", "layer_id: ForeignKey(Layer)", "geometry: Geometry (PostGIS)", "properties: JSONB (속성 데이터)"]
+    },
+    {
+      "name": "AnalysisResult",
+      "description": "지리 공간 분석(면적 계산 등) 결과 저장",
+      "fields": ["id: UUID", "feature_id: ForeignKey(Feature)", "analysis_type: String (예: AREA)", "result_value: Float", "unit: String"]
     }
   ],
-
   "services": [
-    "UploadService",
-    "AnalysisService"
+    {
+      "name": "UploadService",
+      "responsibility": "GeoJSON 파일 수신, 대용량 파일 스트리밍 업로드 및 S3 저장 관리"
+    },
+	{
+	  "name": "StorageService",
+	  "responsibility": "S3 저장 및 파일 관리"
+	},
+	{
+	  "name": "GeoJsonParsingService",
+	  "responsibility": "GeoJson 파싱"
+	},
+    {
+      "name": "GeoJsonValidationService",
+      "responsibility": "GeoJSON 스키마 유효성 검사, 좌표계(WGS84) 확인 및 데이터 정규화"
+    },
+    {
+      "name": "LayerService",
+      "responsibility": "레이어 생성, 조회, 삭제 및 메타데이터 관리 비즈니스 로직"
+    },
+    {
+      "name": "GeometryAnalysisService",
+      "responsibility": "Shapely/PyProj 또는 PostGIS를 활용한 면적 계산 및 공간 연산 수행"
+    }
   ],
-
   "repositories": [
-    "GeoFileRepository"
+    "UserRepository: 사용자 CRUD 및 인증 정보 조회",
+    "LayerRepository: 레이어 메타데이터 관리 및 사용자별 목록 필터링",
+    "FeatureRepository: PostGIS 공간 쿼리를 통한 지리 객체 조회 및 대량 삽입",
+    "AnalysisResultRepository: 분석 이력 및 결과 데이터 저장 및 조회"
   ],
-
   "api_endpoints": [
-    "/upload",
-    "/analysis/{id}"
+  {
+    "path": "/api/v1/auth/login",
+    "method": "POST",
+    "request": {
+      "email": "String",
+      "password": "String"
+    },
+    "response": {
+      "access_token": "String",
+      "refresh_token": "String",
+      "token_type": "Bearer"
+    }
+  },
+  {
+    "path": "/api/v1/auth/refresh",
+    "method": "POST",
+    "request": {
+      "refresh_token": "String"
+    },
+    "response": {
+      "access_token": "String",
+      "token_type": "Bearer"
+    }
+  },
+  {
+    "path": "/api/v1/users/me",
+    "method": "GET",
+    "request": {},
+    "response": {
+      "id": "UUID",
+      "email": "String",
+      "name": "String"
+    }
+  },
+  {
+    "path": "/api/v1/layers/upload",
+    "method": "POST",
+    "request": {
+      "file": "GeoJSON File",
+      "layer_name": "String"
+    },
+    "response": {
+      "layer_id": "UUID",
+      "upload_status": "SUCCESS",
+      "feature_count": "Integer"
+    },
+	"error_cases": [
+		{
+		  "code": "INVALID_GEOJSON",
+		  "description": "GeoJSON 형식이 올바르지 않음"
+		},
+		{
+		  "code": "INVALID_GEOMETRY",
+		  "description": "Geometry가 유효하지 않음"
+		},
+		{
+		  "code": "FILE_SIZE_EXCEEDED",
+		  "description": "허용 용량 초과"
+		}
+	  ]
+  },
+  {
+    "path": "/api/v1/layers",
+    "method": "GET",
+    "request": {
+      "page": "Integer",
+      "size": "Integer"
+    },
+    "response": {
+      "items": "List[LayerSummary]",
+      "total_count": "Integer"
+    }
+  },
+  {
+    "path": "/api/v1/layers/{layer_id}",
+    "method": "GET",
+    "request": {},
+    "response": {
+      "layer": "LayerDetail"
+    }
+  },
+  {
+    "path": "/api/v1/layers/{layer_id}",
+    "method": "DELETE",
+    "request": {},
+    "response": {
+      "deleted": true
+    }
+  },
+  {
+    "path": "/api/v1/layers/{layer_id}/features",
+    "method": "GET",
+    "request": {
+      "bbox": "String (Optional, 공간 필터링용)"
+    },
+    "response": {
+      "type": "FeatureCollection",
+      "features": "List[FeatureSchema]"
+    }
+  },
+  {
+    "path": "/api/v1/layers/{layer_id}/metadata",
+    "method": "GET",
+    "request": {},
+    "response": {
+      "feature_count": "Integer",
+      "geometry_types": "List[String]",
+      "bounds": "BoundingBox"
+    }
+  },
+  {
+    "path": "/api/v1/analysis/area",
+    "method": "POST",
+    "request": {
+      "feature_id": "UUID"
+    },
+    "response": {
+      "area": "Float",
+      "unit": "㎡"
+    }
+  },
+  {
+    "path": "/api/v1/analysis/statistics",
+    "method": "POST",
+    "request": {
+      "layer_id": "UUID"
+    },
+    "response": {
+      "feature_count": "Integer",
+      "geometry_types": "Object",
+      "total_area": "Float"
+    }
+  }
+],
+  "validation_rules": [
+    "GeoJSON RFC 7946 표준 준수 여부 검사",
+    "Geometry 타입 유효성 (Polygon, MultiPolygon 등) 및 Self-intersection 검증",
+    "좌표 범위 유효성 검사 (경도 -180~180, 위도 -90~90)",
+    "파일 크기 제한 (최대 50MB) 및 확장자(.geojson, .json) 검증"
   ],
-
-  "folder_structure": [
-    "api/",
-    "service/",
-    "repository/",
-    "domain/"
+  "error_handling_strategy": [
+    "전역 예외 처리기(Global Exception Handler)를 통한 일관된 에러 응답 포맷 제공",
+    "GIS 엔진(PostGIS/Shapely) 오류 발생 시 구체적인 공간 데이터 오류 메시지 반환",
+    "HTTP 상태 코드 활용: 400(잘못된 GeoJSON), 413(파일 크기 초과), 422(공간 데이터 유효성 실패)"
+  ],
+  "security_considerations": [
+    "JWT 기반 Access/Refresh Token 인증 체계 도입",
+    "RBAC(Role Based Access Control)를 통한 레이어 접근 권한 제어",
+    "S3 Pre-signed URL을 사용한 안전한 파일 업로드 및 다운로드",
+    "Rate Limiting을 통한 무분별한 API 요청 및 대용량 분석 시도 방지"
+  ],
+  "performance_considerations": [
+    "FastAPI의 비동기(async) 엔드포인트를 통한 동시 요청 처리 최적화",
+    "대용량 GeoJSON 파싱 시 ijson 등을 활용한 스트리밍 처리로 메모리 점유율 최소화",
+    "PostGIS GIST 인덱스를 활용한 공간 검색 성능 향상",
+    "빈번하게 조회되는 레이어 메타데이터에 대한 Redis 캐싱 고려"
   ]
 }

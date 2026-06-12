@@ -1,31 +1,97 @@
 {
+  "system_overview": "본 시스템은 GeoJSON 파일을 업로드하여 지도상에 시각화하고, 속성 조회 및 면적 계산 기능을 제공하는 확장 가능한 GIS 웹 애플리케이션입니다. 대용량 파일 처리와 향후 PostGIS 연동을 고려한 계층형 아키텍처를 채택합니다.",
   "frontend": {
-    "framework": "React",
-    "map_library": "Leaflet"
-  },
+	  "framework": "React",
+	  "state_management": "Zustand",
+	  "map_library": "Leaflet",
 
+	  "future_map_engine": [
+		"MapLibre",
+		"Cesium"
+	  ]
+	},
   "backend": {
-    "framework": "FastAPI"
+    "framework": "FastAPI",
+    "architecture_style": "클린 아키텍처 (Domain-Driven Design 기반의 계층 분리)",
+	"future_processing_engine": [
+		"Go Microservice"
+	  ]
   },
-
   "database": {
-    "type": "PostgreSQL"
+    "type": "PostgreSQL with PostGIS (지리 공간 쿼리 및 대용량 데이터 저장 최적화)"
   },
-
+  "storage": {
+		"type": "Amazon S3",
+		"purpose": "원본 GeoJSON 저장"
+	  },
+  
   "modules": [
-    "upload",
-    "analysis",
-    "map"
+    {
+      "name": "File Ingestion Module",
+      "responsibility": "GeoJSON 파일 업로드 수신, 유효성 검사 및 임시 저장소 관리"
+    },
+    {
+      "name": "GIS Processing Module",
+      "responsibility": "지리 공간 데이터 파싱, 좌표계 변환, 면적 계산 및 속성 추출"
+    },
+	{
+	  "name": "Geometry Validation Module",
+	  "responsibility": "GeoJSON 구조 및 Geometry 유효성 검증"
+	},
+    {
+      "name": "Map Rendering Bridge",
+      "responsibility": "프론트엔드 지도 라이브러리와 백엔드 데이터 포맷 간의 중계 및 최적화된 타일링 지원"
+    },
+    {
+      "name": "Layer Management Module",
+      "responsibility": "사용자별 업로드 데이터의 레이어 논리 구조 및 메타데이터 관리"
+    }
+  ],
+  "data_flow": [
+    "사용자가 클라이언트를 통해 GeoJSON 파일을 업로드합니다.",
+    "File Ingestion Module이 파일을 검증한 후 GIS Processing Module로 전달합니다.",
+    "Processing Module은 면적 등 분석을 수행하고 결과를 데이터베이스에 저장합니다.",
+    "프론트엔드는 API를 통해 최적화된 GeoJSON 또는 타일 데이터를 요청하여 지도 라이브러리로 렌더링합니다."
   ],
 
+  "domain_entities": [
+	"User",
+	"Layer",
+	"Feature",
+	"AnalysisResult"
+  ],
   "apis": [
     {
       "method": "POST",
-      "path": "/upload"
+      "path": "/api/v1/layers/upload",
+      "description": "GeoJSON 파일을 업로드하고 새로운 레이어를 생성합니다."
     },
     {
       "method": "GET",
-      "path": "/analysis/{id}"
+      "path": "/api/v1/layers",
+      "description": "사용자가 관리 중인 모든 레이어 목록을 조회합니다."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/layers/{layer_id}/features",
+      "description": "특정 레이어의 지리 객체 정보 및 속성 데이터를 조회합니다."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/analysis/area",
+      "description": "지정된 폴리곤 객체의 정밀 면적 계산 결과를 반환합니다."
     }
-  ]
+  ],
+  "deployment_architecture": "AWS 환경에서의 컨테이너 기반 배포 (Amazon EKS 또는 ECS). 정적 웹 리소스는 CloudFront와 S3를 통해 배포하며, 백엔드 API는 ALB 뒤의 Auto Scaling Group을 통해 가용성을 확보합니다. 데이터베이스는 Amazon RDS for PostgreSQL (PostGIS)를 사용합니다.",
+  "future_extensions": [
+	  "Vector Tile",
+	  "Raster Layer",
+	  "WMS",
+	  "WMTS",
+	  "Cesium 3D Visualization"
+	],
+	"auth_strategy": {
+	  "authentication": "JWT",
+	  "authorization": "User-Owned Layer Access"
+	}
 }

@@ -1,41 +1,42 @@
 {
   "infrastructure": {
-    "frontend": "S3 + CloudFront",
-    "backend": "ECS Fargate",
-    "database": "RDS PostgreSQL"
+    "frontend": "React 앱은 AWS S3에 정적 웹 사이트로 호스팅되며, 전 세계 사용자에게 낮은 지연 시간으로 제공하기 위해 AWS CloudFront(CDN)를 통해 배포됩니다.",
+    "backend": "FastAPI 백엔드는 인프라 관리 부담을 줄이기 위해 서버리스 컨테이너 서비스인 AWS ECS Fargate상에서 실행됩니다. 대용량 GeoJSON 업로드 및 분석 부하에 따라 자동으로 확장(Autoscaling)됩니다.",
+    "database": "지리 공간 데이터 처리를 위해 PostGIS 확장 기능이 활성화된 Amazon RDS for PostgreSQL을 사용합니다. 다중 가용 영역(Multi-AZ) 구성을 통해 높은 가용성을 확보합니다."
   },
-
   "docker": {
     "frontend_container": true,
     "backend_container": true,
     "docker_compose": true
   },
-
   "cicd": {
     "provider": "GitHub Actions",
     "jobs": [
-      "lint",
-      "test",
-      "build",
-      "deploy-staging"
+      "PR 유효성 검사: 코드 린트(Lint) 및 프론트/백엔드 단위 테스트 수행",
+      "빌드: 프론트엔드 정적 파일 빌드 및 백엔드 Docker 이미지 빌드",
+      "이미지 푸시: Amazon ECR(Elastic Container Registry)에 버전 태그와 함께 이미지 저장",
+      "개발 환경 배포: develop 브랜치 푸시 시 개발 서버 자동 배포",
+      "운영 환경 배포: main 브랜치 푸시 및 관리자 승인 후 ECS 서비스 업데이트 및 CloudFront 캐시 무효화"
     ]
   },
-
   "environments": [
-    "local",
-    "development",
-    "staging",
-    "production"
+    "local: Docker Compose를 사용하여 백엔드, 프론트엔드, 로컬 데이터베이스 환경을 동일하게 재현",
+    "development: 최신 기능 통합 및 테스트를 위한 환경 (자동 배포)",
+    "staging: 운영 환경 배포 전 성능 및 인수 테스트를 수행하는 환경 (운영과 동일한 인프라)",
+    "production: 실제 사용자가 접속하는 최상위 가용성 및 보안 수준의 환경 (승인 절차 필수)"
   ],
-
   "monitoring": {
     "health_check": true,
     "application_logs": true,
     "error_tracking": true
   },
-
   "security": {
-    "secret_manager": "AWS Secrets Manager",
-    "github_secrets": true
-  }
+    "secret_management": "데이터베이스 암호 및 API 키와 같은 민감 정보는 AWS Secrets Manager에서 중앙 관리하며, 배포 시 환경 변수로 주입합니다. GitHub Secrets는 CI/CD 워크플로우 보안에 사용합니다.",
+    "authentication_strategy": "백엔드 API는 JWT를 통한 인증을 수행하며, 인프라 간 권한 관리(S3 접근 등)는 최소 권한 원칙에 따른 IAM Role을 사용합니다. 모든 트래픽은 HTTPS(TLS)로 암호화됩니다."
+  },
+  "deployment_architecture": "AWS EKS 또는 ECS Fargate를 활용한 컨테이너 기반 배포. S3는 GeoJSON 파일 저장소로 활용하며 Lifecycle 정책을 통해 비용을 최적화합니다.",
+  "scalability": "ECS 서비스의 CPU/메모리 사용률에 기반한 Auto Scaling 설정 및 RDS Storage Auto Scaling 활성화. 대용량 파일 분석을 위한 비동기 처리 워커 확장성을 고려합니다.",
+  "cost_optimization": "개발 환경은 Fargate Spot 인스턴스를 활용하여 비용을 절감하고, S3의 Intelligent-Tiering 및 CloudFront의 캐싱 정책을 통해 불필요한 전송 비용을 최소화합니다.",
+  "disaster_recovery": "RDS의 자동 백업(Snapshots) 및 포인트 인 타임 복구(PITR) 기능을 활성화합니다. S3 버킷 버전 관리를 통해 데이터 삭제에 대비하며, 테라폼(IaC)을 통한 신속한 인프라 재구축 환경을 마련합니다.",
+  "deployment_strategy": "새로운 버전 배포 시 서비스 중단 없는 Rolling Update 또는 Blue/Green 배포 전략을 사용합니다."
 }

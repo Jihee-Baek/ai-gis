@@ -1,0 +1,21 @@
+{
+  "pages": [
+    {
+      "name": "",
+      "description": ""
+    }
+  ],
+  "components": [
+    {
+      "name": "",
+      "description": ""
+    }
+  ],
+  "routes": [],
+  "stores": [],
+  "api_hooks": [],
+  "ui_flow": [],
+  "state_management_strategy": "",
+  "performance_considerations": [],
+  "accessibility_considerations": []
+}

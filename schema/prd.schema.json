@@ -1,0 +1,19 @@
+{
+  "product_name": "",
+  "problem_statement": "",
+  "target_users": [],
+  "user_personas": [],
+  "features": [
+    {
+      "id": "",
+      "name": "",
+      "description": "",
+      "business_value": "",
+      "priority": ""
+    }
+  ],
+  "non_functional_requirements": [],
+  "success_metrics": [],
+  "mvp_scope": [],
+  "future_scope": []
+}

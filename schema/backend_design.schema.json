@@ -1,0 +1,29 @@
+{
+  "folder_structure": [],
+  "entities": [
+    {
+      "name": "",
+      "description": "",
+      "fields": []
+    }
+  ],
+  "services": [
+    {
+      "name": "",
+      "responsibility": ""
+    }
+  ],
+  "repositories": [],
+  "api_endpoints": [
+    {
+      "path": "",
+      "method": "",
+      "request": {},
+      "response": {}
+    }
+  ],
+  "validation_rules": [],
+  "error_handling_strategy": [],
+  "security_considerations": [],
+  "performance_considerations": []
+}

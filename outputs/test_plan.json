@@ -1,19 +1,36 @@
 {
   "unit_tests": [
-    "UploadService upload success",
-    "UploadService invalid file"
+    "Backend: Pydantic 스키마를 이용한 GeoJSON 필드 유효성 검사 테스트",
+    "Backend: Shapely를 활용한 폴리곤 면적 계산 로직 정밀도 테스트",
+    "Frontend: LayerPanel의 가시성 토글 버튼 클릭 시 상태 업데이트 테스트",
+    "Frontend: FeaturePopup에 GeoJSON 속성 데이터가 올바르게 매핑되는지 테스트"
   ],
-
   "integration_tests": [
-    "Upload → Analysis"
+    "API-DB 연동: Layer 생성 시 PostGIS 공간 인덱스가 정상적으로 생성되는지 확인",
+    "API-S3 연동: GeoJSON 업로드 API 호출 시 S3 버킷에 파일이 저장되고 경로가 반환되는지 테스트",
+    "Auth-Service 연동: 유효하지 않은 JWT 토큰 사용 시 401 Unauthorized 응답 확인",
+    "GIS-Service 연동: 대용량 GeoJSON 파일 파싱 및 피처 추출 프로세스 통합 테스트"
   ],
-
   "e2e_tests": [
-    "Upload GeoJSON and display map"
+    "시나리오 1: 사용자 로그인 -> GeoJSON 파일 업로드 -> 지도상에 레이어 시각화 확인",
+    "시나리오 2: 지도상의 특정 피처 선택 -> 속성 사이드바 노출 및 데이터 일치 여부 확인",
+    "시나리오 3: 특정 폴리곤 선택 -> 면적 분석 실행 -> 분석 결과 카드에 수치 표시 확인",
+    "시나리오 4: 레이어 관리 페이지에서 기존 레이어 삭제 -> 지도상에서 해당 레이어 제거 확인"
   ],
-
   "edge_cases": [
-    "Empty GeoJSON",
-    "Large GeoJSON"
-  ]
+    "좌표값이 비어있는 GeoJSON 피처 업로드 시 예외 처리 확인",
+    "Self-intersecting(스스로 교차하는) 폴리곤 업로드 시 유효성 검사 실패 및 에러 메시지 확인",
+    "50MB 초과 대용량 파일 업로드 시 413 Payload Too Large 응답 확인",
+    "WGS84 이외의 좌표계로 작성된 데이터 업로드 시 좌표 변환 실패 또는 거부 처리 테스트"
+  ],
+  "regression_tests": [
+    "신규 기능 추가 후 기존 레이어 On/Off 및 지도 줌/팬 기능 정상 작동 확인",
+    "로그아웃 후 이전 세션의 인증 토큰으로 API 접근이 불가능한지 재검증",
+    "데이터베이스 스키마 마이그레이션 후 기존 GeoJSON 피처의 공간 쿼리 성능 유지 확인"
+  ],
+  "coverage_goals": {
+    "backend": "비즈니스 로직 및 GIS 분석 모듈에 대해 테스트 커버리지 90% 이상 달성",
+    "frontend": "주요 UI 컴포넌트 및 상태 관리 로직에 대해 테스트 커버리지 80% 이상 달성"
+  },
+  "summary": "본 테스트 계획은 GIS 애플리케이션의 핵심인 지리 데이터 무결성과 시각화 성능에 초점을 맞춥니다. 단위 테스트부터 E2E 시나리오까지 계층별 테스트를 수행하며, 특히 대용량 데이터 및 유효하지 않은 기하학적 객체 처리에 대한 에지 케이스 검증을 강화하여 서비스의 신뢰성을 확보합니다."
 }
