@@ -1,0 +1,16 @@
+{
+  "score": 85,
+
+  "issues": [
+    {
+      "severity": "medium",
+      "message": "Map rendering abstraction missing"
+    }
+  ],
+
+  "recommendations": [
+    "Introduce MapService abstraction"
+  ],
+
+  "approved": true
+}

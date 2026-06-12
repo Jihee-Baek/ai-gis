@@ -1,0 +1,33 @@
+{
+  "entities": [
+    {
+      "name": "GeoFile",
+      "fields": [
+        "id",
+        "file_name",
+        "uploaded_at"
+      ]
+    }
+  ],
+
+  "services": [
+    "UploadService",
+    "AnalysisService"
+  ],
+
+  "repositories": [
+    "GeoFileRepository"
+  ],
+
+  "api_endpoints": [
+    "/upload",
+    "/analysis/{id}"
+  ],
+
+  "folder_structure": [
+    "api/",
+    "service/",
+    "repository/",
+    "domain/"
+  ]
+}

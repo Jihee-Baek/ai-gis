@@ -1,0 +1,28 @@
+{
+  "pages": [
+    "UploadPage",
+    "MapPage",
+    "ResultPage"
+  ],
+
+  "components": [
+    "GeoUpload",
+    "MapViewer",
+    "AnalysisPanel"
+  ],
+
+  "stores": [
+    "geoStore"
+  ],
+
+  "api_hooks": [
+    "useUploadGeoJson",
+    "useAnalysis"
+  ],
+
+  "routes": [
+    "/",
+    "/map",
+    "/result"
+  ]
+}

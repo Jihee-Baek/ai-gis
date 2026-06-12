@@ -1,0 +1,29 @@
+{
+  "product_name": "Geo Analyzer",
+
+  "problem_statement": "GIS 툴 사용 경험이 없는 사용자도 GeoJSON을 쉽게 분석할 수 있어야 한다.",
+
+  "target_users": [
+    "건설 관리자",
+    "GIS 초급 사용자"
+  ],
+
+  "features": [
+    {
+      "id": "F001",
+      "name": "GeoJSON Upload"
+    },
+    {
+      "id": "F002",
+      "name": "Map Visualization"
+    },
+    {
+      "id": "F003",
+      "name": "Area Calculation"
+    }
+  ],
+
+  "success_metrics": [
+    "업로드 후 5초 내 렌더링"
+  ]
+}

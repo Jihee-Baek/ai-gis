@@ -1,0 +1,13 @@
+{
+  "docker": true,
+
+  "github_actions": [
+    "lint",
+    "test",
+    "build"
+  ],
+
+  "deployment": {
+    "platform": "AWS"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "unit_tests": [
+    "UploadService upload success",
+    "UploadService invalid file"
+  ],
+
+  "integration_tests": [
+    "Upload → Analysis"
+  ],
+
+  "e2e_tests": [
+    "Upload GeoJSON and display map"
+  ],
+
+  "edge_cases": [
+    "Empty GeoJSON",
+    "Large GeoJSON"
+  ]
+}

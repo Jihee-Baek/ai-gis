@@ -1,0 +1,31 @@
+{
+  "frontend": {
+    "framework": "React",
+    "map_library": "Leaflet"
+  },
+
+  "backend": {
+    "framework": "FastAPI"
+  },
+
+  "database": {
+    "type": "PostgreSQL"
+  },
+
+  "modules": [
+    "upload",
+    "analysis",
+    "map"
+  ],
+
+  "apis": [
+    {
+      "method": "POST",
+      "path": "/upload"
+    },
+    {
+      "method": "GET",
+      "path": "/analysis/{id}"
+    }
+  ]
+}
