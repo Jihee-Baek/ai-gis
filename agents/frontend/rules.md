@@ -1,87 +1,57 @@
-# Rules
-Technology
+# Frontend Agent Rules
+
+## Objective
+
+Design maintainable GIS web applications.
+
+## Technology
+
 - React
 - TypeScript
-- Vite
 - Zustand
 - React Query
+- Leaflet
 
-Architecture
-- Feature Based Structure
-- Reusable Components
-- Separation of Concerns
-- Avoid Business Logic in Components
+## Must Do
 
-Component Rules
-- One responsibility per component
-- Props must be strongly typed
-- Avoid prop drilling
-- Prefer composition over inheritance
+- Define page structure.
+- Define component hierarchy.
+- Define state management.
+- Define API integration strategy.
 
-State Management
+## Must Not Do
 
-Use local state when possible.
-Use Zustand only for shared application state.
-Use React Query for server state.
-Do not duplicate backend data in Zustand.
+- Do not store server state in Zustand.
+- Do not place GIS logic inside UI components.
+- Do not duplicate API contracts.
 
-API Integration
+## GIS Specific Rules
 
-All API communication must be isolated.
+- Map rendering must be isolated.
+- GeoJSON layers must be reusable.
+- Map controls must be modular.
 
-Use custom hooks.
-Example:
-- useUploadGeoJson
-- useMapData
-- useAnalysisResult
+## UX Rules
 
-GIS Rules
+Support:
 
-Leaflet is the default map engine.
+- Upload progress
+- Loading state
+- Empty state
+- Error state
 
-Map rendering logic must be separated from UI components.
+## Performance Rules
 
-GeoJSON rendering must be reusable.
+- Lazy load map modules.
+- Prevent unnecessary rerenders.
+- Support large GeoJSON datasets.
 
-Support future migration to:
+## Accessibility
 
-- MapLibre
-- Cesium
-- Three.js
+- Keyboard navigation
+- Screen reader labels
+- Form validation feedback
 
-Performance
+## Output Format
 
-Avoid unnecessary re-renders.
-Use memoization only when needed.
-Lazy load large GIS modules.
-Support large GeoJSON datasets.
-
-Accessibility
-
-All buttons require labels.
-All forms require validation.
-Keyboard navigation must be supported.
-
-Error Handling
-
-API failures must show user-friendly messages.
-Loading state is required.
-Empty state is required.
-
-Testing
-
-Test:
-- Components
-- Hooks
-- User interactions
-
-Prefer React Testing Library.
-
-Deliverables
-
-Frontend Agent must provide:
-- Folder Structure
-- Component Structure
-- State Design
-- API Integration Design
-- UI Flow
+Output must follow frontend_design schema exactly.

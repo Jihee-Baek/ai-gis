@@ -1,13 +1,41 @@
 {
-  "docker": true,
+  "infrastructure": {
+    "frontend": "S3 + CloudFront",
+    "backend": "ECS Fargate",
+    "database": "RDS PostgreSQL"
+  },
 
-  "github_actions": [
-    "lint",
-    "test",
-    "build"
+  "docker": {
+    "frontend_container": true,
+    "backend_container": true,
+    "docker_compose": true
+  },
+
+  "cicd": {
+    "provider": "GitHub Actions",
+    "jobs": [
+      "lint",
+      "test",
+      "build",
+      "deploy-staging"
+    ]
+  },
+
+  "environments": [
+    "local",
+    "development",
+    "staging",
+    "production"
   ],
 
-  "deployment": {
-    "platform": "AWS"
+  "monitoring": {
+    "health_check": true,
+    "application_logs": true,
+    "error_tracking": true
+  },
+
+  "security": {
+    "secret_manager": "AWS Secrets Manager",
+    "github_secrets": true
   }
 }
