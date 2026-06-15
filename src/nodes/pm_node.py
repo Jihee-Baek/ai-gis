@@ -3,6 +3,8 @@ from src.services.gemini_executor import GeminiExecutor
 from src.services.output_writer import OutputWriter
 
 def pm_node(state):
+    
+    print('='*20, 'Start pm_node')
 
     system = PromptLoader.load("agents/pm/system.md")
     rules = PromptLoader.load("agents/pm/rules.md") 
@@ -35,4 +37,7 @@ Return JSON only.
 
     state["prd_path"] = "outputs/prd.json"
 
-    return state
+    return {
+        "prd_path":
+        "outputs/prd.json"
+    }
