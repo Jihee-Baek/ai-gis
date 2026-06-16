@@ -1,0 +1,317 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "BackendStructure",
+    "description": "Production-ready backend project structure schema for Clean Architecture and FastAPI.",
+    "type": "object",
+    "required": [
+      "project_metadata",
+      "folders",
+      "files"
+    ],
+    "properties": {
+      "project_metadata": {
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "tech_stack"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "프로젝트 이름"
+          },
+          "description": {
+            "type": "string",
+            "description": "프로젝트 설명 (한국어)"
+          },
+          "version": {
+            "type": "string",
+            "default": "0.1.0"
+          },
+          "tech_stack": {
+            "type": "object",
+            "required": [
+              "framework",
+              "orm",
+              "database",
+              "gis_extension"
+            ],
+            "properties": {
+              "framework": {
+                "type": "string",
+                "enum": [
+                  "FastAPI"
+                ]
+              },
+              "orm": {
+                "type": "string",
+                "enum": [
+                  "SQLAlchemy 2.x"
+                ]
+              },
+              "database": {
+                "type": "string",
+                "enum": [
+                  "PostgreSQL"
+                ]
+              },
+              "gis_extension": {
+                "type": "string",
+                "enum": [
+                  "PostGIS"
+                ]
+              },
+              "pydantic_version": {
+                "type": "string",
+                "enum": [
+                  "v2"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "folders": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "path",
+            "purpose"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "폴더 경로 (예: app/api/v1)"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "폴더의 역할 및 목적 (한국어)"
+            }
+          }
+        }
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "path",
+            "layer",
+            "purpose"
+          ],
+          "properties": {
+            "path": {
+              "type": "string",
+              "description": "파일 경로 (예: app/services/geojson_service.py)"
+            },
+            "layer": {
+              "type": "string",
+              "enum": [
+                "api",
+                "service",
+                "repository",
+                "domain",
+                "schemas",
+                "database",
+                "core",
+                "utils",
+                "tests"
+              ],
+              "description": "Clean Architecture 계층"
+            },
+            "purpose": {
+              "type": "string",
+              "description": "파일의 상세 책임 및 목적 (한국어)"
+            },
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "해당 파일이 의존하는 다른 파일 경로 리스트"
+            },
+            "entities": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "해당 파일에서 다루는 주요 엔티티 명칭"
+            },
+            "classes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/class_definition"
+              }
+            },
+            "functions": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/function_definition"
+              }
+            },
+            "api_routes": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/api_route_definition"
+              },
+              "description": "API 계층 파일인 경우 정의되는 라우트 목록"
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "parameter_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "description": "매개변수 설명 (한국어)"
+          },
+          "default": {
+            "type": "string"
+          }
+        }
+      },
+      "function_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "purpose"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "함수의 목적 및 동작 설명 (한국어)"
+          },
+          "parameters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/parameter_definition"
+            }
+          },
+          "return_type": {
+            "type": "string"
+          },
+          "is_async": {
+            "type": "boolean",
+            "default": true
+          },
+          "decorators": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "class_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "purpose"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "클래스의 역할 설명 (한국어)"
+          },
+          "base_class": {
+            "type": "string"
+          },
+          "attributes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/function_definition"
+            }
+          }
+        }
+      },
+      "api_route_definition": {
+        "type": "object",
+        "required": [
+          "method",
+          "path",
+          "operation_id"
+        ],
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": [
+              "GET",
+              "POST",
+              "PUT",
+              "DELETE",
+              "PATCH"
+            ]
+          },
+          "path": {
+            "type": "string"
+          },
+          "operation_id": {
+            "type": "string"
+          },
+          "summary": {
+            "type": "string",
+            "description": "API 요약 (한국어)"
+          },
+          "description": {
+            "type": "string",
+            "description": "API 상세 설명 (한국어)"
+          },
+          "request_model": {
+            "type": "string",
+            "description": "사용되는 Pydantic 요청 스키마 명칭"
+          },
+          "response_model": {
+            "type": "string",
+            "description": "사용되는 Pydantic 응답 스키마 명칭"
+          },
+          "status_code": {
+            "type": "integer",
+            "default": 200
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }

@@ -1,0 +1,321 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "FrontendStructure",
+    "description": "Production-ready frontend project structure schema for Feature-Based Architecture and React.",
+    "type": "object",
+    "required": [
+      "project_metadata",
+      "folders",
+      "files"
+    ],
+    "properties": {
+      "project_metadata": {
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "tech_stack"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "tech_stack": {
+            "type": "object",
+            "required": [
+              "framework",
+              "language",
+              "state_management",
+              "data_fetching",
+              "map_library"
+            ],
+            "properties": {
+              "framework": {
+                "type": "string",
+                "enum": [
+                  "React (Vite)"
+                ]
+              },
+              "language": {
+                "type": "string",
+                "enum": [
+                  "TypeScript"
+                ]
+              },
+              "state_management": {
+                "type": "string",
+                "enum": [
+                  "Zustand"
+                ]
+              },
+              "data_fetching": {
+                "type": "string",
+                "enum": [
+                  "React Query"
+                ]
+              },
+              "map_library": {
+                "type": "string",
+                "enum": [
+                  "Leaflet"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "folders": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "path",
+            "purpose"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "purpose": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "files": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "path",
+            "type",
+            "purpose"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "page",
+                "component",
+                "hook",
+                "store",
+                "service",
+                "type",
+                "util",
+                "layout",
+                "route",
+                "asset"
+              ]
+            },
+            "purpose": {
+              "type": "string"
+            },
+			
+			 "route": {
+				"type": "object",
+				"properties": {
+				  "path": {
+					"type": "string"
+				  },
+				  "protected": {
+					"type": "boolean"
+				  }
+				}
+			  },
+
+			  "owned_components": {
+				"type": "array",
+				"items": {
+				  "type": "string"
+				}
+			  },
+
+			  "used_hooks": {
+				"type": "array",
+				"items": {
+				  "type": "string"
+				}
+			  },
+
+			  "used_stores": {
+				"type": "array",
+				"items": {
+				  "type": "string"
+				}
+			  },
+			  
+            "dependencies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "exported_symbols": {
+              "type": "array",
+              "items": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/component_definition"
+                  },
+                  {
+                    "$ref": "#/definitions/hook_definition"
+                  },
+                  {
+                    "$ref": "#/definitions/store_definition"
+                  },
+                  {
+                    "$ref": "#/definitions/interface_definition"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "component_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "purpose"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "functional_component"
+            ]
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "props": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                },
+                "required": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "used_hooks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "hook_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "purpose",
+          "hook_type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "hook_type": {
+            "type": "string",
+            "enum": [
+              "query",
+              "mutation",
+              "custom"
+            ]
+          },
+          "api_endpoint": {
+            "type": "string",
+            "description": "이 훅이 호출하는 백엔드 API 경로 (해당되는 경우)"
+          },
+          "params": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "return_value": {
+            "type": "string"
+          }
+        }
+      },
+      "store_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "purpose",
+          "state"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "purpose": {
+            "type": "string"
+          },
+          "state": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "interface_definition": {
+        "type": "object",
+        "required": [
+          "name",
+          "definition_type"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "definition_type": {
+            "type": "string",
+            "enum": [
+              "interface",
+              "type_alias",
+              "enum"
+            ]
+          },
+          "description": {
+            "type": "string"
+          }

@@ -1,0 +1,281 @@
+{
+  "project_metadata": {
+    "name": "GIS Insight Viewer Backend",
+    "description": "GeoJSON 파일 업로드, 시각화 및 공간 분석을 위한 Clean Architecture 기반 FastAPI 백엔드 프로젝트",
+    "version": "0.1.0",
+    "tech_stack": {
+      "framework": "FastAPI",
+      "orm": "SQLAlchemy 2.x",
+      "database": "PostgreSQL",
+      "gis_extension": "PostGIS",
+      "pydantic_version": "v2"
+    }
+  },
+  "folders": [
+    {
+      "path": "app/api",
+      "purpose": "API 라우팅 및 엔드포인트 정의 계층"
+    },
+    {
+      "path": "app/services",
+      "purpose": "비즈니스 로직 및 유스케이스 처리 계층"
+    },
+    {
+      "path": "app/repositories",
+      "purpose": "데이터베이스 접근 및 영속성 관리 계층"
+    },
+    {
+      "path": "app/models",
+      "purpose": "도메인 엔티티 및 데이터베이스 스키마 정의 계층"
+    },
+    {
+      "path": "app/schemas",
+      "purpose": "데이터 전송 객체(DTO) 및 Pydantic 모델 정의 계층"
+    },
+    {
+      "path": "app/database",
+      "purpose": "데이터베이스 연결, 세션 관리 및 마이그레이션 설정"
+    },
+    {
+      "path": "app/core",
+      "purpose": "애플리케이션 전역 설정, 보안 및 공통 구성 요소"
+    },
+    {
+      "path": "app/utils",
+      "purpose": "공간 데이터 처리 등 공통 유틸리티 함수"
+    },
+    {
+      "path": "storage/geojson",
+      "purpose": "업로드된 GeoJSON 물리 파일 저장소"
+    }
+  ],
+  "files": [
+    {
+      "path": "app/main.py",
+      "layer": "core",
+      "purpose": "FastAPI 애플리케이션 초기화 및 미들웨어, 라우터 등록",
+      "dependencies": [
+        "app/api/v1/api.py",
+        "app/core/config.py"
+      ],
+      "functions": [
+        {
+          "name": "get_application",
+          "purpose": "FastAPI 앱 인스턴스를 생성하고 설정을 적용한다.",
+          "return_type": "FastAPI",
+          "is_async": false
+        }
+      ]
+    },
+    {
+      "path": "app/core/config.py",
+      "layer": "core",
+      "purpose": "환경 변수 및 프로젝트 전역 설정 관리",
+      "classes": [
+        {
+          "name": "Settings",
+          "purpose": "BaseSettings를 상속받아 환경 변수 및 앱 설정을 정의한다.",
+          "base_class": "BaseSettings"
+        }
+      ]
+    },
+    {
+      "path": "app/database/session.py",
+      "layer": "database",
+      "purpose": "SQLAlchemy 엔진 생성 및 데이터베이스 세션 관리",
+      "dependencies": [
+        "app/core/config.py"
+      ],
+      "functions": [
+        {
+          "name": "get_db",
+          "purpose": "데이터베이스 세션을 생성하고 반환하는 의존성 주입용 함수",
+          "return_type": "Generator"
+        }
+      ]
+    },
+    {
+      "path": "app/models/geo_file.py",
+      "layer": "domain",
+      "purpose": "업로드된 GeoJSON 파일의 메타데이터를 저장하는 DB 엔티티 정의",
+      "entities": [
+        "GeoFile"
+      ],
+      "classes": [
+        {
+          "name": "GeoFile",
+          "purpose": "GeoJSON 파일 정보를 저장하는 데이터베이스 모델",
+          "base_class": "Base"
+        }
+      ]
+    },
+    {
+      "path": "app/schemas/geojson.py",
+      "layer": "schemas",
+      "purpose": "GeoJSON 업로드 및 조회에 사용되는 Pydantic 모델 정의",
+      "classes": [
+        {
+          "name": "GeoFileUploadResponse",
+          "purpose": "파일 업로드 완료 후 반환되는 응답 스키마"
+        },
+        {
+          "name": "GeoFileDetail",
+          "purpose": "저장된 GeoJSON 파일의 상세 정보를 위한 응답 스키마"
+        }
+      ]
+    },
+    {
+      "path": "app/schemas/analysis.py",
+      "layer": "schemas",
+      "purpose": "공간 분석 결과(면적 등)를 위한 Pydantic 모델 정의",
+      "classes": [
+        {
+          "name": "AnalysisResult",
+          "purpose": "개별 지리 객체에 대한 분석 결과 스키마"
+        }
+      ]
+    },
+    {
+      "path": "app/repositories/geo_file_repository.py",
+      "layer": "repository",
+      "purpose": "GeoFile 엔티티에 대한 CRUD 작업 수행",
+      "dependencies": [
+        "app/models/geo_file.py"
+      ],
+      "classes": [
+        {
+          "name": "GeoFileRepository",
+          "purpose": "GeoFile 데이터 접근 로직을 담당하는 클래스"
+        }
+      ]
+    },
+    {
+      "path": "app/services/ingestion_service.py",
+      "layer": "service",
+      "purpose": "GeoJSON 파일 업로드 처리 및 물리 저장소 관리",
+      "dependencies": [
+        "app/repositories/geo_file_repository.py",
+        "app/core/config.py"
+      ],
+      "classes": [
+        {
+          "name": "FileIngestionService",
+          "purpose": "파일 유효성 검사 및 저장을 담당하는 서비스",
+          "methods": [
+            {
+              "name": "handle_upload",
+              "purpose": "파일을 수신하여 검증하고 저장소에 기록한다.",
+              "parameters": [
+                {
+                  "name": "file",
+                  "type": "UploadFile",
+                  "description": "사용자가 업로드한 파일"
+                }
+              ],
+              "return_type": "GeoFile"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "app/services/analysis_service.py",
+      "layer": "service",
+      "purpose": "GeoJSON 데이터 기반 공간 분석(면적 계산 등) 수행",
+      "dependencies": [
+        "app/utils/spatial_utils.py"
+      ],
+      "classes": [
+        {
+          "name": "SpatialAnalysisService",
+          "purpose": "공간 연산 유스케이스를 처리하는 서비스",
+          "methods": [
+            {
+              "name": "calculate_areas",
+              "purpose": "GeoJSON 데이터 내 폴리곤의 면적을 계산한다.",
+              "parameters": [
+                {
+                  "name": "geojson_data",
+                  "type": "dict",
+                  "description": "GeoJSON 형식의 딕셔너리 데이터"
+                }
+              ],
+              "return_type": "List[AnalysisResult]"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "app/utils/spatial_utils.py",
+      "layer": "utils",
+      "purpose": "Shapely 등을 이용한 저수준 공간 연산 유틸리티",
+      "functions": [
+        {
+          "name": "calculate_polygon_area",
+          "purpose": "단일 폴리곤 객체의 지표면 면적을 계산한다.",
+          "parameters": [
+            {
+              "name": "geometry",
+              "type": "dict",
+              "description": "GeoJSON Geometry 객체"
+            }
+          ],
+          "return_type": "float"
+        }
+      ]
+    },
+    {
+      "path": "app/api/v1/api.py",
+      "layer": "api",
+      "purpose": "버전 1 API 라우터들의 진입점 관리",
+      "dependencies": [
+        "app/api/v1/endpoints/geojson.py",
+        "app/api/v1/endpoints/health.py"
+      ]
+    },
+    {
+      "path": "app/api/v1/endpoints/geojson.py",
+      "layer": "api",
+      "purpose": "GeoJSON 관련 API 엔드포인트 정의",
+      "dependencies": [
+        "app/services/ingestion_service.py",
+        "app/services/analysis_service.py",
+        "app/schemas/geojson.py"
+      ],
+      "api_routes": [
+        {
+          "method": "POST",
+          "path": "/upload",
+          "operation_id": "upload_geojson",
+          "summary": "GeoJSON 파일 업로드 및 분석",
+          "description": "GeoJSON 파일을 업로드하면 유효성을 검사하고 면적 분석 결과를 포함하여 반환한다.",
+          "request_model": "UploadFile",
+          "response_model": "GeoFileUploadResponse"
+        },
+        {
+          "method": "GET",
+          "path": "/{file_id}",
+          "operation_id": "get_geojson_detail",
+          "summary": "GeoJSON 데이터 조회",
+          "description": "저장된 특정 GeoJSON 파일의 메타데이터 및 원본 데이터를 조회한다.",
+          "response_model": "GeoFileDetail"
+        }
+      ]
+    },
+    {
+      "path": "app/api/v1/endpoints/health.py",
+      "layer": "api",
+      "purpose": "시스템 상태 확인 API",
+      "api_routes": [
+        {
+          "method": "GET",
+          "path": "/health",
+          "operation_id": "check_health",
+          "summary": "헬스 체크",
+          "description": "시스템 가동 상태를 확인한다."
+        }
+      ]
+    }
+  ]
+}

@@ -1,5 +1,5 @@
-def join_node(state):
-    print('='*20, 'Start join_node')
+def join_design_node(state):
+    print('='*20, 'Start join_design_node')
 
     if not state.get("backend_design_path"):
         raise ValueError(
@@ -11,4 +11,4 @@ def join_node(state):
             "frontend_design_path not found"
         )
 
-    return {}
+    return state

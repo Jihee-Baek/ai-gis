@@ -5,7 +5,6 @@ from src.services.gemini_executor import GeminiExecutor
 from src.services.output_writer import OutputWriter
 from src.services.json_loader import JsonLoader
 
-
 def devops_node(state):
 
     print('='*20, 'Start devops_node')

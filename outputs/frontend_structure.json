@@ -1,0 +1,358 @@
+{
+  "project_metadata": {
+    "name": "GIS Insight Viewer",
+    "description": "비전문가를 위한 GeoJSON 데이터 시각화 및 공간 분석 웹 애플리케이션",
+    "tech_stack": {
+      "framework": "React (Vite)",
+      "language": "TypeScript",
+      "state_management": "Zustand",
+      "data_fetching": "React Query",
+      "map_library": "Leaflet"
+    }
+  },
+  "folders": [
+    {
+      "path": "src/pages",
+      "purpose": "애플리케이션의 각 라우트별 페이지 컴포넌트를 관리합니다."
+    },
+    {
+      "path": "src/components",
+      "purpose": "여러 기능에서 재사용되는 공통 UI 컴포넌트를 관리합니다."
+    },
+    {
+      "path": "src/features",
+      "purpose": "기능별(Map, Upload, Analysis 등) 도메인 로직과 전용 컴포넌트를 관리하는 Feature-Based 구조의 핵심 폴더입니다."
+    },
+    {
+      "path": "src/hooks",
+      "purpose": "전역적으로 사용되는 커스텀 훅 및 API 통신(React Query) 훅을 관리합니다."
+    },
+    {
+      "path": "src/services",
+      "purpose": "API 클라이언트 설정 및 외부 라이브러리 연동 로직을 관리합니다."
+    },
+    {
+      "path": "src/stores",
+      "purpose": "Zustand를 이용한 클라이언트 측 전역 상태를 관리합니다."
+    },
+    {
+      "path": "src/types",
+      "purpose": "애플리케이션 전반에서 사용되는 공통 타입 및 인터페이스를 정의합니다."
+    },
+    {
+      "path": "src/routes",
+      "purpose": "애플리케이션의 라우팅 구성 및 경로 정의를 관리합니다."
+    },
+    {
+      "path": "src/layouts",
+      "purpose": "페이지의 공통 레이아웃 컴포넌트를 관리합니다."
+    },
+    {
+      "path": "src/utils",
+      "purpose": "공통 유틸리티 함수 및 상수 정의를 관리합니다."
+    }
+  ],
+  "files": [
+    {
+      "path": "src/pages/MainViewerPage.tsx",
+      "type": "page",
+      "purpose": "지도 시각화, 파일 업로드, 분석 결과 확인이 통합된 메인 대시보드 페이지",
+      "route": {
+        "path": "/",
+        "protected": false
+      },
+      "owned_components": [
+        "MapContainer",
+        "FileUploader",
+        "LayerSidebar",
+        "PropertyInspector",
+        "AnalysisCard",
+        "LoadingOverlay"
+      ],
+      "used_hooks": [
+        "useUploadGeoJson",
+        "useGetSpatialAnalysis"
+      ],
+      "used_stores": [
+        "useMapStore",
+        "useFeatureStore"
+      ],
+      "dependencies": [
+        "src/features/map/components/MapContainer.tsx",
+        "src/features/upload/components/FileUploader.tsx",
+        "src/features/sidebar/components/LayerSidebar.tsx",
+        "src/features/inspector/components/PropertyInspector.tsx",
+        "src/features/analysis/components/AnalysisCard.tsx",
+        "src/components/common/LoadingOverlay.tsx"
+      ],
+      "exported_symbols": [
+        {
+          "name": "MainViewerPage",
+          "type": "functional_component",
+          "purpose": "애플리케이션의 메인 뷰어 레이아웃을 구성하고 상태를 조율합니다.",
+          "used_hooks": [
+            "useUploadGeoJson",
+            "useGetSpatialAnalysis",
+            "useMapStore",
+            "useFeatureStore"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/features/map/components/MapContainer.tsx",
+      "type": "component",
+      "purpose": "Leaflet 기반의 핵심 지도 컴포넌트",
+      "used_stores": [
+        "useMapStore",
+        "useFeatureStore"
+      ],
+      "dependencies": [
+        "src/stores/mapStore.ts",
+        "src/stores/featureStore.ts"
+      ],
+      "exported_symbols": [
+        {
+          "name": "MapContainer",
+          "type": "functional_component",
+          "purpose": "GeoJSON 레이어 렌더링, 줌/팬 인터랙션, 객체 클릭 이벤트를 처리합니다.",
+          "used_hooks": [
+            "useEffect",
+            "useCallback"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/features/upload/components/FileUploader.tsx",
+      "type": "component",
+      "purpose": "GeoJSON 파일 드래그 앤 드롭 업로드 인터페이스",
+      "used_hooks": [
+        "useUploadGeoJson"
+      ],
+      "dependencies": [
+        "src/hooks/mutations/useUploadGeoJson.ts"
+      ],
+      "exported_symbols": [
+        {
+          "name": "FileUploader",
+          "type": "functional_component",
+          "purpose": "사용자로부터 GeoJSON 파일을 입력받아 서버로 전송하는 기능을 담당합니다.",
+          "used_hooks": [
+            "useUploadGeoJson"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/features/sidebar/components/LayerSidebar.tsx",
+      "type": "component",
+      "purpose": "업로드된 레이어 목록 및 분석 요약 정보 표시",
+      "used_stores": [
+        "useMapStore"
+      ],
+      "dependencies": [
+        "src/stores/mapStore.ts",
+        "src/features/analysis/components/AnalysisCard.tsx"
+      ],
+      "exported_symbols": [
+        {
+          "name": "LayerSidebar",
+          "type": "functional_component",
+          "purpose": "활성 레이어 관리 및 공간 분석 결과의 주요 지표를 사용자에게 보여줍니다."
+        }
+      ]
+    },
+    {
+      "path": "src/features/inspector/components/PropertyInspector.tsx",
+      "type": "component",
+      "purpose": "선택된 지리 객체의 속성 정보 상세 조회 패널",
+      "used_stores": [
+        "useFeatureStore"
+      ],
+      "dependencies": [
+        "src/stores/featureStore.ts"
+      ],
+      "exported_symbols": [
+        {
+          "name": "PropertyInspector",
+          "type": "functional_component",
+          "purpose": "객체의 메타데이터를 표 형식으로 시각화하여 제공합니다."
+        }
+      ]
+    },
+    {
+      "path": "src/features/analysis/components/AnalysisCard.tsx",
+      "type": "component",
+      "purpose": "면적 계산 결과 등 분석 수치 강조 카드",
+      "exported_symbols": [
+        {
+          "name": "AnalysisCard",
+          "type": "functional_component",
+          "purpose": "특정 폴리곤의 면적 정보를 시각적으로 강조하여 표시합니다.",
+          "props": [
+            {
+              "name": "label",
+              "type": "string",
+              "required": true
+            },
+            {
+              "name": "value",
+              "type": "number",
+              "required": true
+            },
+            {
+              "name": "unit",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/components/common/LoadingOverlay.tsx",
+      "type": "component",
+      "purpose": "데이터 로딩 및 분석 진행 상태 표시 오버레이",
+      "exported_symbols": [
+        {
+          "name": "LoadingOverlay",
+          "type": "functional_component",
+          "purpose": "비동기 작업 중 사용자의 상호작용을 제어하고 진행 상태를 알립니다.",
+          "props": [
+            {
+              "name": "isVisible",
+              "type": "boolean",
+              "required": true
+            },
+            {
+              "name": "message",
+              "type": "string",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/stores/mapStore.ts",
+      "type": "store",
+      "purpose": "지도 줌 레벨, 중심 좌표, 활성 레이어 상태 관리",
+      "exported_symbols": [
+        {
+          "name": "useMapStore",
+          "purpose": "지도 관련 전역 상태를 관리하는 Zustand 스토어입니다.",
+          "state": [
+            {
+              "name": "zoom",
+              "type": "number"
+            },
+            {
+              "name": "center",
+              "type": "[number, number]"
+            },
+            {
+              "name": "layers",
+              "type": "Layer[]"
+            }
+          ],
+          "actions": [
+            "setZoom",
+            "setCenter",
+            "addLayer",
+            "removeLayer",
+            "toggleLayerVisibility"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/stores/featureStore.ts",
+      "type": "store",
+      "purpose": "현재 선택된 객체 및 속성 데이터 상태 관리",
+      "exported_symbols": [
+        {
+          "name": "useFeatureStore",
+          "purpose": "선택된 지리 객체와 해당 속성을 관리하는 Zustand 스토어입니다.",
+          "state": [
+            {
+              "name": "selectedFeature",
+              "type": "GeoJSONFeature | null"
+            },
+            {
+              "name": "hoveredFeature",
+              "type": "GeoJSONFeature | null"
+            }
+          ],
+          "actions": [
+            "setSelectedFeature",
+            "clearSelection"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/mutations/useUploadGeoJson.ts",
+      "type": "hook",
+      "purpose": "GeoJSON 파일 업로드 및 분석 결과 수신 훅",
+      "exported_symbols": [
+        {
+          "name": "useUploadGeoJson",
+          "purpose": "파일 업로드 API를 호출하고 결과를 React Query 상태로 관리합니다.",
+          "hook_type": "mutation",
+          "api_endpoint": "/api/v1/geojson/upload",
+          "return_value": "UseMutationResult"
+        }
+      ]
+    },
+    {
+      "path": "src/hooks/queries/useGetSpatialAnalysis.ts",
+      "type": "hook",
+      "purpose": "특정 파일의 공간 분석 상세 정보 조회 훅",
+      "exported_symbols": [
+        {
+          "name": "useGetSpatialAnalysis",
+          "purpose": "서버로부터 특정 데이터의 면적 및 분석 메타데이터를 가져옵니다.",
+          "hook_type": "query",
+          "api_endpoint": "/api/v1/geojson/{file_id}",
+          "params": [
+            "fileId"
+          ],
+          "return_value": "UseQueryResult"
+        }
+      ]
+    },
+    {
+      "path": "src/types/spatial.ts",
+      "type": "type",
+      "purpose": "GeoJSON 및 공간 분석 관련 타입 정의",
+      "exported_symbols": [
+        {
+          "name": "SpatialAnalysisResult",
+          "definition_type": "interface",
+          "description": "서버에서 반환하는 공간 분석 결과 데이터 구조"
+        },
+        {
+          "name": "LayerInfo",
+          "definition_type": "interface",
+          "description": "지도 레이어의 메타데이터 및 상태 정보"
+        }
+      ]
+    },
+    {
+      "path": "src/routes/AppRoutes.tsx",
+      "type": "route",
+      "purpose": "애플리케이션 전체 라우팅 구성",
+      "dependencies": [
+        "src/pages/MainViewerPage.tsx"
+      ],
+      "exported_symbols": [
+        {
+          "name": "AppRoutes",
+          "type": "functional_component",
+          "purpose": "React Router를 사용하여 경로와 페이지를 매핑합니다."
+        }
+      ]
+    }
+  ]
+}

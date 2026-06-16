@@ -5,19 +5,19 @@ from src.services.gemini_executor import GeminiExecutor
 from src.services.output_writer import OutputWriter
 from src.services.json_loader import JsonLoader
 
-
-def frontend_node(state):
-
-    print('='*20, 'Start frontend_node')
+def backend_structure_node(state):
+    print("=" * 20, "Start backend_structure_node")
 
     prd = JsonLoader.load(state["prd_path"])
     architecture = JsonLoader.load(state["architecture_path"])
+    backend_design = JsonLoader.load(state["backend_design_path"])
 
-    system = PromptLoader.load("agents/frontend/system.md")
-    rules = PromptLoader.load("agents/frontend/rules.md")
+
+    system = PromptLoader.load("agents/backend_structure/system.md")
+    rules = PromptLoader.load("agents/backend_structure/rules.md")
     language = PromptLoader.load("shared/language_policy.md")
     output_contract = PromptLoader.load("shared/output_contract.md")
-    schema = PromptLoader.load("schema/frontend_design.schema.json")
+    schema = PromptLoader.load("schema/backend_structure.schema.json")
 
     prompt = f"""
 {system}
@@ -28,27 +28,34 @@ def frontend_node(state):
 
 {output_contract}
 
+Read the following files:
+
 # PRD
 {json.dumps(prd, ensure_ascii=False, indent=2)}
 
 # Architecture
 {json.dumps(architecture, ensure_ascii=False, indent=2)}
 
+# Backend_design
+{json.dumps(backend_design, ensure_ascii=False, indent=2)}
+
 # Output Schema
 {schema}
 
-Output must follow frontend schema exactly.
+Output must follow backend structure exactly.
 Return JSON only.
+
+Generate:
+outputs/backend_structure.json
 """
 
     response = GeminiExecutor.run(prompt)
 
-    OutputWriter.save_json("outputs/frontend_design.json", response)
+    OutputWriter.save_json("outputs/backend_structure.json", response)
 
-    state["frontend_design_path"] = "outputs/frontend_design.json"
+    state["backend_structure_path"] = "outputs/backend_structure.json"
 
     return {
-        "frontend_design_path":
-        "outputs/frontend_design.json"
-
+        "backend_structure_path":
+        "outputs/backend_structure.json"
     }
