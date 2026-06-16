@@ -1,2 +1,18 @@
 __pycache__
 *.pyc
+
+# Diagnostics
+diag_db*.py
+check_*.py
+test.json
+sample_seoul.geojson
+diag_db.py
+diag_db_2.py
+diag_db_3.py
+check_dbs.py
+check_tables.py
+
+# Project specific
+project/backend/storage/
+project/frontend/node_modules/
+project/frontend/dist/
