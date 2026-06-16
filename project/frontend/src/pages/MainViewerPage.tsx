@@ -18,17 +18,17 @@ const MainViewerPage: React.FC = () => {
       width: '100vw',
       height: '100vh',
       overflow: 'hidden',
-      fontFamily: 'sans-serif'
+      backgroundColor: 'var(--bg-main)'
     }}>
       <LayerSidebar />
       
-      <main style={{ flex: 1, position: 'relative' }}>
+      <main style={{ flex: 1, position: 'relative', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.05)' }}>
         <div style={{
           position: 'absolute',
-          top: '20px',
-          left: '20px',
+          top: '24px',
+          left: '24px',
           zIndex: 1000,
-          width: '400px'
+          width: '360px'
         }}>
           <FileUploader />
         </div>
@@ -37,7 +37,7 @@ const MainViewerPage: React.FC = () => {
         <PropertyInspector />
       </main>
 
-      <LoadingOverlay isVisible={isUploading} message="GeoJSON 파일을 분석 중입니다..." />
+      <LoadingOverlay isVisible={isUploading} message="GeoJSON 데이터를 분석하고 있습니다..." />
     </div>
   );
 };

@@ -10,39 +10,63 @@ const LayerSidebar: React.FC = () => {
 
   return (
     <div style={{
-      width: '300px',
+      width: '320px',
       height: '100%',
-      backgroundColor: 'white',
-      borderRight: '1px solid #ddd',
-      padding: '20px',
+      backgroundColor: 'var(--bg-sidebar)',
+      borderRight: '1px solid var(--border-color)',
+      padding: '24px',
       display: 'flex',
       flexDirection: 'column',
-      zIndex: 1001
+      zIndex: 1001,
+      boxShadow: '2px 0 8px rgba(0,0,0,0.02)'
     }}>
-      <h2 style={{ fontSize: '20px', marginBottom: '20px' }}>레이어 목록</h2>
+      <div style={{ marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: '700', color: 'var(--primary-dark)', margin: 0 }}>데이터 레이어</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px' }}>시각화 및 분석 관리</p>
+      </div>
       
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div style={{ flex: 1, overflowY: 'auto', paddingRight: '4px' }}>
         {layers.length === 0 ? (
-          <p style={{ color: '#999', textAlign: 'center' }}>업로드된 레이어가 없습니다.</p>
+          <div style={{ 
+            marginTop: '40px', 
+            textAlign: 'center', 
+            color: 'var(--text-muted)',
+            padding: '20px',
+            backgroundColor: 'var(--bg-main)',
+            borderRadius: 'var(--radius)',
+            fontSize: '14px'
+          }}>
+            추가된 데이터 레이어가 없습니다.
+          </div>
         ) : (
           layers.map((layer) => (
             <div key={layer.id} style={{ 
-              marginBottom: '20px', 
-              padding: '12px', 
-              border: '1px solid #eee', 
-              borderRadius: '8px'
+              marginBottom: '16px', 
+              padding: '16px', 
+              backgroundColor: 'white',
+              border: '1px solid var(--border-color)', 
+              borderRadius: 'var(--radius)',
+              boxShadow: 'var(--shadow-sm)'
             }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <span style={{ fontWeight: '600' }}>{layer.name}</span>
-                <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                <span style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '15px' }}>{layer.name}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <input 
                     type="checkbox" 
                     checked={layer.visible} 
                     onChange={() => toggleLayerVisibility(layer.id)} 
+                    style={{ cursor: 'pointer', width: '16px', height: '16px' }}
                   />
                   <button 
                     onClick={() => removeLayer(layer.id)}
-                    style={{ marginLeft: '8px', color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}
+                    style={{ 
+                      color: '#ef4444', 
+                      border: 'none', 
+                      background: 'none', 
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      padding: '4px'
+                    }}
                   >
                     삭제
                   </button>
@@ -50,12 +74,22 @@ const LayerSidebar: React.FC = () => {
               </div>
 
               {layer.analysis && layer.analysis.analysis_results && (
-                <div style={{ marginTop: '10px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {layer.analysis.analysis_results.map((result: any, idx: number) => (
-                    <div key={idx} style={{ marginBottom: '8px', padding: '8px', backgroundColor: '#f9f9f9', borderRadius: '4px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: 'bold' }}>{result.properties.name || `피처 ${idx + 1}`}</div>
-                      <AnalysisCard label="면적" value={result.area_sqm} unit="㎡" />
-                      <AnalysisCard label="면적 (평)" value={result.area_pyung} unit="평" />
+                    <div key={idx} style={{ 
+                      padding: '12px', 
+                      backgroundColor: 'var(--bg-main)', 
+                      borderRadius: '6px',
+                      border: '1px solid rgba(0,0,0,0.03)'
+                    }}>
+                      <div style={{ fontSize: '12px', fontWeight: '700', color: 'var(--primary-color)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                         <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-color)' }}></span>
+                         {result.properties.name || `객체 ${idx + 1}`}
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <AnalysisCard label="면적" value={result.area_sqm} unit="㎡" />
+                        <AnalysisCard label="평수" value={result.area_pyung} unit="평" />
+                      </div>
                     </div>
                   ))}
                 </div>

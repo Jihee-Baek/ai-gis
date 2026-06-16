@@ -12,17 +12,19 @@ interface AnalysisCardProps {
 const AnalysisCard: React.FC<AnalysisCardProps> = ({ label, value, unit = '㎡' }) => {
   return (
     <div style={{
-      padding: '16px',
-      backgroundColor: '#f8f9fa',
-      borderRadius: '8px',
-      border: '1px solid #dee2e6',
-      marginBottom: '12px'
+      padding: '8px',
+      backgroundColor: 'white',
+      borderRadius: '4px',
+      border: '1px solid var(--border-color)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '2px'
     }}>
-      <div style={{ fontSize: '14px', color: '#6c757d', marginBottom: '4px' }}>
+      <div style={{ fontSize: '10px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
         {label}
       </div>
-      <div style={{ fontSize: '20px', fontWeight: 'bold', color: '#212529' }}>
-        {value.toLocaleString()} <span style={{ fontSize: '14px', fontWeight: 'normal' }}>{unit}</span>
+      <div style={{ fontSize: '14px', fontWeight: '700', color: 'var(--text-main)' }}>
+        {value.toLocaleString()} <span style={{ fontSize: '11px', fontWeight: '400', color: 'var(--text-muted)' }}>{unit}</span>
       </div>
     </div>
   );

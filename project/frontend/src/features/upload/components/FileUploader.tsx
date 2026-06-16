@@ -53,16 +53,21 @@ const FileUploader: React.FC = () => {
 
   return (
     <div 
-      onClick={() => fileInputRef.current?.click()}
+      onClick={() => !isPending && fileInputRef.current?.click()}
       style={{
-        padding: '20px',
-        border: '2px dashed #007bff',
-        borderRadius: '8px',
+        padding: '24px',
+        border: '2px dashed var(--primary-light)',
+        borderRadius: 'var(--radius)',
         textAlign: 'center',
-        cursor: 'pointer',
-        backgroundColor: isPending ? '#f0f0f0' : 'transparent',
-        transition: 'background-color 0.2s'
+        cursor: isPending ? 'not-allowed' : 'pointer',
+        backgroundColor: isPending ? 'var(--bg-main)' : 'rgba(255,255,255,0.9)',
+        boxShadow: 'var(--shadow-md)',
+        backdropFilter: 'blur(4px)',
+        transition: 'all 0.2s ease',
+        borderWidth: isPending ? '2px' : '2px'
       }}
+      onMouseOver={(e) => !isPending && (e.currentTarget.style.borderColor = 'var(--accent-color)')}
+      onMouseOut={(e) => !isPending && (e.currentTarget.style.borderColor = 'var(--primary-light)')}
     >
       <input 
         type="file" 
@@ -71,11 +76,11 @@ const FileUploader: React.FC = () => {
         style={{ display: 'none' }} 
         accept=".json,.geojson"
       />
-      <div style={{ fontSize: '16px', fontWeight: '500', color: '#007bff' }}>
-        {isPending ? '파일 분석 중...' : 'GeoJSON 파일을 여기에 드래그하거나 클릭하여 업로드하세요.'}
+      <div style={{ fontSize: '15px', fontWeight: '600', color: 'var(--primary-dark)', marginBottom: '4px' }}>
+        {isPending ? '분석 중...' : 'GeoJSON 데이터 업로드'}
       </div>
-      <div style={{ fontSize: '12px', color: '#6c757d', marginTop: '8px' }}>
-        최대 50MB까지 지원합니다.
+      <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
+        {isPending ? '잠시만 기다려주세요.' : '클릭하거나 파일을 드래그하세요.'}
       </div>
     </div>
   );
