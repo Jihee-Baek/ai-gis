@@ -12,7 +12,7 @@ class OutputWriter:
         # 데이터 문자열 예외 처리
         if isinstance(data, str):
             print("===== BEFORE LOADS =====")
-            print(data[:500])
+            print(data[:100])
 
             try:
                 data = json.loads(data)
@@ -26,3 +26,13 @@ class OutputWriter:
 
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+    @staticmethod
+    def write_file(relative_path: str, content: str):
+
+        path = PROJECT_ROOT / relative_path
+
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)

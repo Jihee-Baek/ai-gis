@@ -14,6 +14,7 @@ from src.nodes.join_codegen_node import join_codegen_node
 from src.nodes.reviewer_node import reviewer_node
 from src.nodes.devops_node import devops_node
 from src.nodes.qa_node import qa_node
+from src.nodes.project_writer_node import project_writer_node
 
 builder = StateGraph(ProjectState)
 builder.add_node("pm", pm_node)
@@ -30,6 +31,7 @@ builder.add_node("join_codegen", join_codegen_node)
 builder.add_node("reviewer", reviewer_node)
 builder.add_node("devops", devops_node)
 builder.add_node("qa", qa_node)
+builder.add_node("project_writer", project_writer_node)
 builder.set_entry_point("pm")
 builder.add_edge("pm", "architect")
 builder.add_edge("architect", "backend_design")
@@ -44,6 +46,9 @@ builder.add_edge("join_structure", "frontend_codegen")
 builder.add_edge(["backend_codegen", "frontend_codegen"], "join_codegen")
 builder.add_edge("join_codegen", "devops")
 builder.add_edge("devops", "qa")
-builder.add_edge("qa", END)
+builder.add_edge("qa", "project_writer")
+builder.add_edge("project_writer", END)
+
+
 
 graph = builder.compile()
