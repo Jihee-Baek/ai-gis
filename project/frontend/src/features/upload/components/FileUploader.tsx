@@ -51,9 +51,40 @@ const FileUploader: React.FC = () => {
     }
   };
 
+  const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!isPending) {
+      e.currentTarget.style.borderColor = 'var(--accent-color)';
+      e.currentTarget.style.backgroundColor = 'var(--bg-main)';
+    }
+  };
+
+  const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!isPending) {
+      e.currentTarget.style.borderColor = 'var(--primary-light)';
+      e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.9)';
+    }
+  };
+
+  const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (isPending) return;
+    
+    e.currentTarget.style.borderColor = 'var(--primary-light)';
+    e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.9)';
+
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleUpload(e.dataTransfer.files[0]);
+    }
+  };
+
   return (
     <div 
       onClick={() => !isPending && fileInputRef.current?.click()}
+      onDragOver={onDragOver}
+      onDragLeave={onDragLeave}
+      onDrop={onDrop}
       style={{
         padding: '24px',
         border: '2px dashed var(--primary-light)',

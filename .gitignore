@@ -6,6 +6,8 @@ diag_db*.py
 check_*.py
 test.json
 sample_seoul.geojson
+seoul_landmarks.geojson
+test.py
 diag_db.py
 diag_db_2.py
 diag_db_3.py
