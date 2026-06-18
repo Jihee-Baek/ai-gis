@@ -18,7 +18,7 @@ const FileUploader: React.FC = () => {
         reader.onload = (e) => {
           const geoJsonData = JSON.parse(e.target?.result as string);
           addLayer({
-            id: data.file_id,
+            id: String(data.id),
             name: file.name,
             visible: true,
             data: geoJsonData,

@@ -26,9 +26,16 @@ export const useMapStore = create<MapState & MapActions>((set) => ({
   setZoom: (zoom) => set({ zoom }),
   setCenter: (center) => set({ center }),
   
-  addLayer: (layer) => set((state) => ({
-    layers: [...state.layers, layer]
-  })),
+  addLayer: (layer) => set((state) => {
+    const id = layer.id || `layer-${Date.now()}`;
+    // 이미 동일한 ID가 있다면 추가하지 않거나 덮어쓰지 않음 (필요시 로직 조정 가능)
+    if (state.layers.some((l) => l.id === id)) {
+      return state;
+    }
+    return {
+      layers: [...state.layers, { ...layer, id }]
+    };
+  }),
 
   removeLayer: (id) => set((state) => ({
     layers: state.layers.filter((l) => l.id !== id)
