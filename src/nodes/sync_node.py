@@ -16,7 +16,12 @@ def doc_sync_node(state):
     prompt = f"""
 당신은 Senior Architect입니다. 
 코드 분석 결과(# Code Analysis Report)를 바탕으로 기존 아키텍처 설계(# Existing Architecture)를 최신화하세요.
-실제 코드로 구현된 스펙이 설계서와 다를 경우, 실제 구현을 기준으로 문서를 업데이트해야 합니다.
+
+**보수적 업데이트 원칙 (Minimal Refactoring Policy):**
+1. 실제 구현과 설계서가 상충하는 지점만 '수술'하듯 정밀하게 수정하세요.
+2. 실제 코드에 반영되지 않은 불필요한 아키텍처 변경이나 리팩토링은 절대 하지 마세요.
+3. 기존 설계의 문구, 형식, 명칭을 가급적 토씨 하나 틀리지 않게 유지하세요.
+4. 새로운 기능이 발견된 경우에만 해당 섹션에 내용을 추가하세요.
 
 # Existing Architecture
 {json.dumps(existing_arch, ensure_ascii=False, indent=2)}

@@ -2,80 +2,75 @@
   "pages": [
     {
       "name": "MainViewerPage",
-      "description": "지도 시각화, 파일 업로드, 레이어 관리 및 속성 조회가 통합된 단일 페이지 대시보드입니다. 전체적인 레이아웃과 상태 조율을 담당합니다."
+      "description": "지도 시각화, 파일 업로드, 레이어 관리 및 속성 조회가 통합된 단일 페이지 대시보드입니다. 전체적인 레이아웃과 Zustand 스토어의 가시성 상태를 조율하며, 다중 레이어의 독립적인 상태를 관리합니다."
     }
   ],
   "components": [
     {
       "name": "MapContainer",
-      "description": "Leaflet 라이브러리를 사용하여 GeoJSON 레이어를 렌더링하고, 객체 클릭 등 지도 상호작용을 처리하는 핵심 지도 컴포넌트입니다."
+      "description": "Leaflet을 사용하여 GeoJSON 레이어를 렌더링합니다. Zustand 스토어의 layers 배열을 구독하며, 각 레이어의 고유 ID와 isVisible 상태를 기반으로 Leaflet LayerGroup에서 레이어를 개별적으로 추가하거나 제거(addLayer/removeLayer)합니다."
     },
     {
       "name": "FileUploader",
-      "description": "GeoJSON 파일을 드래그 앤 드롭하거나 탐색기에서 선택하여 서버로 업로드하고 공간 분석을 요청하는 인터페이스입니다."
+      "description": "GeoJSON 파일을 업로드하고 서버 분석 결과를 수신하여 Zustand 스토어에 고유 ID를 가진 새로운 독립 레이어 객체로 등록하는 인터페이스입니다."
     },
     {
       "name": "LayerSidebar",
-      "description": "활성 레이어 목록을 표시하고, 가시성 토글, 레이어 삭제 및 객체별 공간 분석 요약 정보를 제공하는 사이드바입니다."
+      "description": "업로드된 모든 레이어 목록을 표시합니다. 각 레이어는 고유한 ID를 가지며, 개별 레이어의 상태를 독립적으로 제어할 수 있는 UI를 제공합니다."
+    },
+    {
+      "name": "LayerItem",
+      "description": "LayerSidebar 내의 개별 항목으로, 특정 레이어의 이름과 독립적인 가시성 토글 체크박스를 포함합니다. 체크박스 조작 시 해당 레이어의 ID만 참조하여 상태를 변경합니다."
     },
     {
       "name": "PropertyInspector",
-      "description": "지도에서 선택된 지리 객체의 상세 속성(Properties) 정보를 표 형식으로 보여주는 패널입니다."
-    },
-    {
-      "name": "AnalysisCard",
-      "description": "공간 분석 결과(면적, 평수 등)를 시각적으로 명확하게 전달하기 위한 UI 컴포넌트입니다."
+      "description": "지도에서 선택된 특정 지리 객체의 속성 정보와 면적 분석 결과(㎡, 평)를 상세 표 형식으로 출력하는 패널입니다."
     },
     {
       "name": "LoadingOverlay",
-      "description": "파일 업로드 및 서버 분석 프로세스가 진행 중일 때 사용자에게 로딩 상태를 알리는 전면 오버레이 컴포넌트입니다."
+      "description": "파일 업로드 및 서버 분석 프로세스 중 사용자에게 진행 상태를 알리는 오버레이입니다."
     }
   ],
   "routes": [
     {
       "path": "/",
       "component": "MainViewerPage",
-      "description": "애플리케이션의 기본 진입점으로 메인 뷰어 페이지를 렌더링합니다."
+      "description": "애플리케이션의 메인 대시보드 진입점입니다."
     }
   ],
   "stores": [
     {
       "name": "useMapStore",
-      "description": "지도의 줌 레벨, 중심 좌표, 그리고 업로드된 레이어 정보(가시성, 분석 결과 포함)를 관리하는 Zustand 스토어입니다."
+      "description": "레이어 목록을 `Array<{ id: string, name: string, data: any, isVisible: boolean }>` 구조로 관리합니다. `toggleLayerVisibility(id)` 액션은 특정 ID를 가진 객체의 `isVisible` 값만 반전시켜 다른 레이어와 상태를 완전히 격리합니다."
     },
     {
       "name": "useFeatureStore",
-      "description": "사용자가 선택하거나 마우스를 올린 특정 지리 객체(Feature)의 상태를 관리하는 Zustand 스토어입니다."
+      "description": "현재 사용자가 선택하여 인스펙터에 표시할 특정 객체(Feature)의 상태를 관리합니다."
     }
   ],
   "api_hooks": [
     {
       "name": "useUploadGeoJson",
-      "description": "파일 업로드 API를 호출하여 GeoJSON을 서버에 등록하고 분석 결과를 받는 React Query Mutation 훅입니다."
+      "description": "GeoJSON 파일을 서버로 전송하고, 반환된 고유 ID와 분석 데이터를 useMapStore의 레이어 목록에 독립적인 항목으로 추가합니다."
     },
     {
       "name": "useGetSpatialAnalysis",
-      "description": "특정 파일 ID를 기반으로 상세 공간 분석 데이터를 서버에서 조회하는 React Query Query 훅입니다."
+      "description": "특정 레이어의 상세 공간 분석 정보를 서버에서 조회합니다."
     }
   ],
   "ui_flow": [
-    "사용자가 브라우저에서 메인 페이지에 접속합니다.",
-    "FileUploader를 통해 GeoJSON 파일을 드래그 앤 드롭으로 업로드합니다.",
-    "업로드 중에는 LoadingOverlay가 활성화되어 분석 중임을 알립니다.",
-    "업로드가 완료되면 서버로부터 분석 결과를 수신하고, useMapStore를 통해 레이어 목록에 추가됩니다.",
-    "지도(MapContainer)에 업로드된 데이터가 시각화되며 해당 영역으로 지도가 이동합니다.",
-    "LayerSidebar에서 레이어별 면적(㎡, 평) 정보를 확인하고 가시성을 제어합니다.",
-    "지도 상의 특정 객체를 클릭하면 PropertyInspector에 상세 속성이 노출됩니다."
+    "사용자가 여러 개의 GeoJSON 파일을 순차적으로 업로드하면 각 파일은 고유 ID를 부여받아 useMapStore의 layers 배열에 독립적인 객체로 저장됩니다.",
+    "LayerSidebar는 layers 배열을 맵핑하여 LayerItem을 렌더링하며, 각 LayerItem의 체크박스는 해당 레이어 객체의 isVisible 상태와 1:1로 바인딩됩니다.",
+    "사용자가 'seoul_landmarks.geojson'의 체크박스를 해제하면, toggleLayerVisibility('seoul_id')가 실행되어 해당 레이어의 isVisible만 false가 되고 다른 레이어(예: sample_seoul.geojson)의 상태는 유지됩니다.",
+    "MapContainer는 useMapStore의 layers 변화를 감지하고, isVisible이 true인 레이어만 지도 레이어 그룹에 유지하고 false인 레이어는 즉시 제거하여 독립적인 시각화를 보장합니다."
   ],
-  "state_management_strategy": "UI의 인터랙티브한 전역 상태(지도 설정, 레이어 가시성 등)는 Zustand를 사용하여 관리하며, 서버 데이터(분석 결과)는 React Query를 사용하여 캐싱 및 동기화를 수행합니다.",
+  "state_management_strategy": "UI의 핵심 상태인 '레이어 리스트'를 Zustand에서 관리하되, 각 레이어를 고유 ID 기반의 독립 객체로 취급하여 상태 변경 시 다른 레이어에 사이드 이펙트가 발생하지 않도록 불변성을 유지하며 업데이트합니다.",
   "performance_considerations": [
-    "React.memo를 활용하여 복잡한 GIS UI 컴포넌트의 불필요한 리렌더링을 방지합니다.",
-    "Leaflet의 FeatureGroup 및 GeoJSON 레이어 관리 최적화를 통해 지도 성능을 유지합니다.",
-    "사이드바의 대량 분석 결과 표시 시 효율적인 리스트 렌더링을 고려합니다."
+    "상태 변경 시 전체 레이어를 다시 그리지 않도록 React.memo를 활용하여 LayerItem을 최적화합니다.",
+    "지도 렌더링 시에는 Leaflet의 LayerGroup을 사용하여 특정 ID의 레이어만 메모리에서 효율적으로 제어합니다."
   ],
   "accessibility_considerations": [
-    "파일 업로드 영역 및 버튼에 대해 설명적인 텍스트 레이블과 ARIA 속성을 제공합니다.",
-    "지도 컨트롤 및 액션 버튼에 대한 명확한 시각적 피드백을 지원합니다.",
-    "고대비 색상 및 적절한 폰트 크기를 통해 시각적 가독성을 확보합니다."
+    "각 레이어의 가시성 토글 체크박스에 '파일이름 표시 상태 변경'과 같은 구체적인 aria-label을 제공합니다.",
+    "스크린 리더 사용자가 현재 지도에 표시되고 있는 레이어의 개수와 이름을 명확히 인지할 수 있도록 Role과 Label을 설정합니다."
   ]
 }

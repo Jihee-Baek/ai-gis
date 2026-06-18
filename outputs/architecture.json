@@ -1,57 +1,57 @@
 {
-  "system_overview": "GIS Insight Viewer는 비전문가가 GeoJSON 데이터를 시각화하고 PostGIS 기반의 정밀 공간 분석을 수행할 수 있도록 돕는 웹 기반 GIS 애플리케이션입니다. 클린 아키텍처 원칙을 준수하여 프론트엔드와 백엔드를 분리하고, PostGIS를 활용한 개별 피처 관리 및 대용량 데이터 처리에 최적화된 계층형 구조로 설계되었습니다.",
+  "system_overview": "GIS Insight Viewer는 비전문가가 GeoJSON 데이터를 시각화하고 PostGIS 기반의 정밀 공간 분석을 수행할 수 있도록 돕는 웹 기반 GIS 애플리케이션입니다. 클린 아키텍처 원칙을 준수하여 프론트엔드와 백엔드를 분리하고, 다중 레이어의 독립적인 가시성 제어와 PostGIS를 활용한 대용량 데이터 처리에 최적화된 계층형 구조로 설계되었습니다. 특히 여러 파일을 동시에 관리할 때 각 레이어가 서로 간섭 없이 독립적으로 동작하도록 상태 관리 메커니즘을 강화하였습니다.",
   "frontend": {
     "framework": "React 19 (TypeScript)",
-    "state_management": "Zustand 5 (레이어 및 피처 상태 관리) 및 TanStack Query 5 (서버 상태 관리)",
-    "map_library": "OpenLayers 또는 MapLibre (고성능 공간 데이터 시각화 및 인터랙션 지원)"
+    "state_management": "Zustand 5를 활용하여 각 레이어를 고유 ID 기반의 독립적인 객체로 관리합니다. 특히 가시성(isVisible) 상태를 정규화된(Normalized) Map 구조로 설계하여 특정 레이어의 토글이 다른 레이어의 상태에 영향을 주지 않도록 보장하며, 서버 데이터 동기화를 위해 TanStack Query 5를 병행 사용합니다.",
+    "map_library": "Leaflet (PRD 요구사항에 따라 대화형 지도 시각화 및 레이어별 독립 렌더링 지원)"
   },
   "backend": {
     "framework": "FastAPI (비동기 처리를 지원하는 고성능 Python 프레임워크)",
     "architecture_style": "Layered Architecture (Controller-Service-Repository 패턴)"
   },
   "database": {
-    "type": "PostgreSQL/PostGIS (메타데이터(geo_files), 개별 지리 피처 및 분석 결과(geo_features) 저장) 및 Local File Storage (GeoJSON 원본 파일 백업 저장)"
+    "type": "PostgreSQL/PostGIS (메타데이터 및 개별 지리 피처 저장, GIST 인덱스 최적화 적용) 및 Local File Storage (원본 파일 백업)"
   },
   "modules": [
     {
       "name": "FileIngestionModule",
-      "responsibility": "GeoJSON 파일 업로드 수신, 데이터 유효성 검증, 물리 파일 저장 및 PostGIS 데이터(geo_files, geo_features) 마이그레이션"
+      "responsibility": "GeoJSON 파일 업로드 수신, 데이터 유효성 검증, 물리 파일 저장 및 PostGIS 데이터 마이그레이션"
     },
     {
       "name": "SpatialAnalysisModule",
-      "responsibility": "Shapely, PyProj 및 PostGIS를 활용한 폴리곤 면적 계산(㎡, 평 단위 변환) 수행 및 분석 결과(calculated_area)를 DB에 영속적으로 저장"
+      "responsibility": "Shapely 및 PostGIS를 활용한 폴리곤 면적 계산(㎡, 평) 수행 및 분석 결과를 DB에 영속적으로 저장"
     },
     {
       "name": "MapRenderingModule",
-      "responsibility": "공간 데이터 시각화(MapContainer), 레이어 가시성 제어 및 삭제, 지도 상호작용 관리"
+      "responsibility": "Leaflet 기반 공간 데이터 시각화 및 Zustand의 레이어별 가시성(Visibility) 상태를 구독하여 독립적인 레이어 표시/숨김 제어"
     },
     {
       "name": "PropertyInspectorModule",
-      "responsibility": "선택된 지리 객체의 속성(Properties) 상세 정보 제공 및 분석 결과 요약 카드(AnalysisCard)를 통한 시각적 피드백 제공"
+      "responsibility": "선택된 지리 객체의 속성 정보 및 분석 결과 요약 카드 제공"
     }
   ],
   "data_flow": [
-    "사용자가 브라우저를 통해 GeoJSON 파일을 업로드합니다.",
-    "백엔드의 FileIngestionModule이 파일을 저장하고, 메타데이터를 geo_files에, 개별 피처(Geometry 및 속성)를 geo_features 테이블에 기록합니다.",
-    "SpatialAnalysisModule이 PostGIS와 라이브러리를 연계하여 각 피처의 정밀 면적(㎡, 평)을 계산하고 geo_features 테이블의 calculated_area 컬럼에 업데이트합니다.",
-    "프론트엔드는 분석 결과가 포함된 데이터를 수신하여 Zustand 및 React Query 상태로 관리합니다.",
-    "MapRenderingModule이 지도를 렌더링하고, 사용자는 사이드바와 PropertyInspector를 통해 레이어 관리 및 상세 분석 정보를 확인합니다."
+    "사용자가 GeoJSON 파일을 업로드하면 서버에서 검증 후 PostGIS에 피처별로 저장하고 고유한 file_id를 반환합니다.",
+    "SpatialAnalysisModule이 각 피처의 면적을 계산하여 DB를 업데이트합니다.",
+    "프론트엔드는 Zustand 스토어에 각 레이어를 고유 ID(file_id)를 키로 하는 독립적인 상태 객체로 저장합니다.",
+    "사용자가 사이드바의 특정 레이어 체크박스를 토글하면, Zustand는 해당 file_id에 대응하는 isVisible 상태값만 변경하며 다른 레이어 객체에는 영향을 주지 않습니다.",
+    "MapRenderingModule은 Zustand의 가시성 상태 변화를 감지하고, Leaflet의 레이어 그룹에서 해당 ID에 해당하는 레이어만 선택적으로 추가(addLayer)하거나 제거(removeLayer)하여 지도에 반영합니다."
   ],
   "apis": [
     {
       "method": "POST",
       "path": "/api/v1/geojson/upload",
-      "description": "GeoJSON 파일을 업로드하고 PostGIS 저장 및 공간 분석(면적 계산)을 수행하여 결과를 반환합니다."
+      "description": "GeoJSON 파일을 업로드하고 PostGIS 저장 및 공간 분석을 수행하여 결과를 반환합니다."
     },
     {
       "method": "GET",
       "path": "/api/v1/geojson/{file_id}",
-      "description": "특정 GeoJSON 파일의 메타데이터와 DB에 저장된 피처 데이터(분석 결과 포함)를 조회합니다."
+      "description": "특정 GeoJSON 파일의 메타데이터와 분석 결과가 포함된 피처 데이터를 조회합니다."
     },
     {
       "method": "GET",
-      "path": "/api/v1/health",
-      "description": "API 서버 및 데이터베이스(PostGIS)의 연결 상태를 확인합니다."
+      "path": "/health",
+      "description": "시스템 가동 상태 확인"
     }
   ],
   "deployment_architecture": "Docker 컨테이너 기반 배포 (Frontend: Nginx, Backend: Uvicorn/FastAPI, DB: PostgreSQL/PostGIS)"

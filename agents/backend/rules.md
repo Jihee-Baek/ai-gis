@@ -26,6 +26,7 @@ Design production-grade backend services.
 * Do not embed business logic in controllers.
 * Do not bypass service layer.
 * Do not create God Services.
+* **Minimal Refactoring Policy**: 기존 백엔드 설계가 제공될 경우, 기능 추가에 필수적이지 않은 리팩토링이나 명칭 변경(Renaming)을 엄격히 제한합니다. 작동하는 기존 설계를 최대한 보존하세요.
 
 ## GIS Specific Rules
 

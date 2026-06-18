@@ -5,6 +5,7 @@ from app.database.session import Base
 class GeoFile(Base):
     """
     GeoJSON 파일 정보를 저장하는 데이터베이스 모델
+    각 레이어를 고유 ID로 관리하여 가시성 및 데이터를 독립적으로 제어할 수 있도록 함.
     """
     __tablename__ = "geo_files"
 

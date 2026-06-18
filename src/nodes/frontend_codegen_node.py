@@ -25,7 +25,7 @@ def frontend_codegen_node(state):
 
     existing_codegen = JsonLoader.load("outputs/frontend_codegen.json")
     existing_content_prompt = ""
-    if existing_codegen:
+    if existing_codegen and isinstance(existing_codegen, dict):
         # 파일이 너무 크면 요약 정보만 전달 (토큰 절약 및 에러 방지)
         file_list = [f["path"] for f in existing_codegen.get("generated_files", [])]
         existing_content_prompt = f"""

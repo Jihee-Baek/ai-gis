@@ -119,6 +119,13 @@ Each page must define:
 
 ---
 
+## Minimal Refactoring Policy
+
+* 기존 프론트엔드 구조(# Existing Frontend Structure)가 제공될 경우, 이를 원형 그대로 유지하는 것을 원칙으로 합니다.
+* 이미 정의된 파일 경로, 컴포넌트 명칭, 훅의 사용처 등을 사용자의 명시적 요청 없이 수정하지 마세요.
+
+---
+
 ## Output Rule
 
 Output must follow frontend_structure.schema.json.

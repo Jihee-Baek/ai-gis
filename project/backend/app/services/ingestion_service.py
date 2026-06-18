@@ -10,6 +10,7 @@ from app.models.geo_file import GeoFile
 class FileIngestionService:
     """
     파일 유효성 검사 및 저장을 담당하는 서비스
+    각 업로드된 파일을 고유한 식별자와 함께 독립된 레이어로 분리하여 저장한다.
     """
     def __init__(self, db: Session):
         self.repository = GeoFileRepository(db)

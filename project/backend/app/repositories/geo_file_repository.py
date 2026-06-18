@@ -20,4 +20,12 @@ class GeoFileRepository:
         return self.db.query(GeoFile).filter(GeoFile.id == file_id).first()
 
     def list_all(self) -> List[GeoFile]:
-        return self.db.query(GeoFile).all()
+        return self.db.query(GeoFile).order_by(GeoFile.upload_time.desc()).all()
+
+    def delete(self, file_id: int) -> bool:
+        db_obj = self.get_by_id(file_id)
+        if db_obj:
+            self.db.delete(db_obj)
+            self.db.commit()
+            return True
+        return False

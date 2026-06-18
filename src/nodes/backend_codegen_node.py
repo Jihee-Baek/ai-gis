@@ -25,7 +25,7 @@ def backend_codegen_node(state):
 
     existing_codegen = JsonLoader.load("outputs/backend_codegen.json")
     existing_content_prompt = ""
-    if existing_codegen:
+    if existing_codegen and isinstance(existing_codegen, dict):
         # 파일 목록만 추출하여 토큰 절약
         file_list = [f["path"] for f in existing_codegen.get("generated_files", [])]
         existing_content_prompt = f"""

@@ -83,7 +83,7 @@
         {
           "name": "MainViewerPage",
           "type": "functional_component",
-          "purpose": "애플리케이션의 메인 뷰어 레이아웃을 구성하고 상태를 조율합니다.",
+          "purpose": "애플리케이션의 메인 뷰어 레이아웃을 구성하고 다중 레이어의 독립적인 상태를 조율합니다.",
           "used_hooks": [
             "useUploadGeoJson"
           ]
@@ -106,7 +106,7 @@
         {
           "name": "MapContainer",
           "type": "functional_component",
-          "purpose": "GeoJSON 레이어 렌더링, 줌/팬 인터랙션, 객체 클릭 이벤트를 처리합니다.",
+          "purpose": "GeoJSON 레이어 렌더링을 담당하며, Zustand 스토어의 layers 배열을 구독하여 isVisible이 true인 레이어만 개별적으로 지도에 표시하거나 제거합니다.",
           "used_hooks": [
             "useEffect",
             "useRef"
@@ -132,7 +132,7 @@
         {
           "name": "FileUploader",
           "type": "functional_component",
-          "purpose": "사용자로부터 GeoJSON 파일을 입력받아 서버로 전송하고 지도를 업데이트합니다.",
+          "purpose": "사용자로부터 GeoJSON 파일을 입력받아 서버로 전송하고, 반환된 데이터를 고유 ID와 함께 새로운 레이어로 추가합니다.",
           "used_hooks": [
             "useUploadGeoJson",
             "useCallback",
@@ -144,19 +144,47 @@
     {
       "path": "src/features/sidebar/components/LayerSidebar.tsx",
       "type": "component",
-      "purpose": "업로드된 레이어 목록 및 분석 요약 정보 표시 사이드바",
+      "purpose": "업로드된 레이어 목록 표시 및 관리 사이드바",
+      "owned_components": [
+        "LayerItem"
+      ],
       "used_stores": [
         "useMapStore"
       ],
       "dependencies": [
         "src/stores/mapStore.ts",
-        "src/features/analysis/components/AnalysisCard.tsx"
+        "src/features/sidebar/components/LayerItem.tsx"
       ],
       "exported_symbols": [
         {
           "name": "LayerSidebar",
           "type": "functional_component",
-          "purpose": "활성 레이어 관리 및 공간 분석 결과의 주요 지표를 사용자에게 보여줍니다."
+          "purpose": "전체 레이어 목록을 나열하고 각 레이어의 개별적인 가시성 제어를 위한 UI를 제공합니다."
+        }
+      ]
+    },
+    {
+      "path": "src/features/sidebar/components/LayerItem.tsx",
+      "type": "component",
+      "purpose": "사이드바 내 개별 레이어의 가시성 토글 및 정보를 표시하는 컴포넌트",
+      "used_stores": [
+        "useMapStore"
+      ],
+      "dependencies": [
+        "src/stores/mapStore.ts"
+      ],
+      "exported_symbols": [
+        {
+          "name": "LayerItem",
+          "type": "functional_component",
+          "purpose": "특정 레이어의 가시성을 독립적으로 제어합니다. 체크박스 조작 시 해당 레이어의 고유 ID를 인자로 toggleLayerVisibility 액션을 호출하여 다른 레이어에 영향을 주지 않고 상태를 변경합니다.",
+          "props": [
+            {
+              "name": "layer",
+              "type": "LayerInfo",
+              "required": true
+            }
+          ]
         }
       ]
     },
@@ -174,7 +202,7 @@
         {
           "name": "PropertyInspector",
           "type": "functional_component",
-          "purpose": "객체의 메타데이터를 표 형식으로 시각화하여 제공합니다."
+          "purpose": "객체의 메타데이터 및 분석 결과를 표 형식으로 시각화하여 제공합니다."
         }
       ]
     },
@@ -234,11 +262,11 @@
     {
       "path": "src/stores/mapStore.ts",
       "type": "store",
-      "purpose": "지도 줌 레벨, 중심 좌표, 활성 레이어 상태 관리",
+      "purpose": "지도 줌 레벨, 중심 좌표, 독립적인 레이어 가시성 상태 관리",
       "exported_symbols": [
         {
           "name": "useMapStore",
-          "purpose": "지도 관련 전역 상태를 관리하는 Zustand 스토어입니다.",
+          "purpose": "지도 관련 전역 상태를 관리합니다. 각 레이어는 고유 ID를 키로 하여 layers 배열 내에서 독립적으로 관리됩니다. toggleLayerVisibility(id)는 특정 ID에 해당하는 레이어의 isVisible 값만 반전시켜 레이어 간 독립적인 가시성 제어를 보장합니다.",
           "state": [
             {
               "name": "zoom",
@@ -296,7 +324,7 @@
       "exported_symbols": [
         {
           "name": "useUploadGeoJson",
-          "purpose": "파일 업로드 API를 호출하고 결과를 React Query 상태로 관리합니다.",
+          "purpose": "파일 업로드 API를 호출하고 결과를 useMapStore의 레이어 목록에 고유 ID를 부여하여 독립 항목으로 추가합니다.",
           "hook_type": "mutation",
           "api_endpoint": "/api/v1/geojson/upload",
           "return_value": "UseMutationResult"
@@ -333,7 +361,7 @@
         {
           "name": "LayerInfo",
           "definition_type": "interface",
-          "description": "지도 레이어의 메타데이터 및 상태 정보"
+          "description": "지도 레이어의 메타데이터 및 독립적인 가시성(isVisible) 상태 정보. 고유 ID를 포함합니다."
         },
         {
           "name": "GeoJSONFeature",

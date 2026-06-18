@@ -1,8 +1,8 @@
 {
   "infrastructure": {
-    "frontend": "AWS ECS Fargate 기반의 Nginx 컨테이너를 통한 React 정적 파일 서빙",
-    "backend": "AWS ECS Fargate 상에서 실행되는 FastAPI 애플리케이션 컨테이너 및 로드 밸런서 구성",
-    "database": "GeoJSON 파일 저장을 위한 AWS S3 및 서비스 메타데이터 관리를 위한 Amazon RDS (PostgreSQL/PostGIS)"
+    "frontend": "AWS ECS Fargate 기반의 Nginx 컨테이너를 통한 React 19 정적 파일 서빙 (Zustand 기반 독립 레이어 상태 관리 최적화)",
+    "backend": "AWS ECS Fargate 상에서 실행되는 FastAPI 애플리케이션 및 ALB 구성 (레이어별 고유 ID 기반 비동기 API 처리)",
+    "database": "공간 데이터 분석을 위한 Amazon RDS (PostgreSQL/PostGIS) 및 원본 GeoJSON 파일의 독립적 관리를 위한 AWS S3"
   },
   "docker": {
     "frontend_container": true,
@@ -12,17 +12,17 @@
   "cicd": {
     "provider": "GitHub Actions",
     "jobs": [
-      "정적 코드 분석 및 린트 검사 (ESLint, Flake8)",
-      "단위 및 통합 테스트 자동화 (Pytest, Jest)",
+      "린트 및 정적 코드 분석 (ESLint, Flake8)",
+      "레이어별 독립 가시성 제어 및 상태 격리 로직 검증을 위한 단위 테스트 (Vitest, Pytest)",
       "Docker 이미지 빌드 및 Amazon ECR 저장소 푸시",
-      "AWS ECS 인프라 업데이트 및 서비스 배포"
+      "AWS ECS 인프라 업데이트 및 헬스 체크 기반 무중단 배포"
     ]
   },
   "environments": [
-    "local: 개발자 로컬 환경 (Docker Compose 기반)",
-    "development: 개발 서버 환경 (지속적 통합 및 기능 확인)",
-    "staging: 운영 환경과 동일한 구성의 최종 검증 환경",
-    "production: 실제 사용자 대상의 고가용성 운영 환경"
+    "local: Docker Compose 기반 개발자 로컬 환경",
+    "development: 개별 레이어 독립성 및 신규 기능 통합 검증 환경",
+    "staging: 운영 환경과 동일한 구성에서의 대용량 데이터 처리 최종 테스트",
+    "production: 고가용성 및 보안이 강화된 사용자 대상 실서비스 환경"
   ],
   "monitoring": {
     "health_check": true,
@@ -30,8 +30,8 @@
     "error_tracking": true
   },
   "security": {
-    "secret_management": "GitHub Secrets와 AWS Secrets Manager를 연동하여 API 키 및 DB 자격 증명 관리",
-    "authentication_strategy": "JWT 기반의 사용자 인증 및 AWS WAF를 통한 보안 계층 추가"
+    "secret_management": "GitHub Secrets와 AWS Secrets Manager를 연동하여 DB 자격 증명 및 API 키 관리",
+    "authentication_strategy": "리뷰어 권고에 따른 OAuth2/JWT 기반 사용자 인증 도입 및 레이어 접근 권한 격리"
   },
-  "deployment_strategy": "ECS Rolling Update 방식을 사용하여 가동 중단 없는 배포 및 헬스 체크 기반의 자동 롤백 수행"
+  "deployment_strategy": "ECS Rolling Update 방식을 사용하여 가동 중단 없는 배포를 수행하며, 헬스 체크 기반의 자동 롤백으로 안정성 확보"
 }

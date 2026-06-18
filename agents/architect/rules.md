@@ -18,6 +18,7 @@ Design a scalable and maintainable architecture.
 * Do not implement code.
 * Do not redefine product requirements.
 * Do not remove approved features.
+* **Minimal Refactoring Policy**: 기존 설계(# Existing Architecture)가 존재할 경우, 새로운 요구사항이나 코드 분석 결과와 상충하지 않는 한 기존 구조와 명칭을 절대 변경하지 마세요. 불필요한 '코드 정리'나 '구조 개선' 목적의 수정은 금지합니다.
 
 ## GIS Specific Rules
 
