@@ -11,35 +11,23 @@ const FileUploader: React.FC = () => {
   const { addLayer } = useMapStore();
 
   const handleUpload = useCallback((file: File) => {
-    console.log('Starting upload for file:', file.name);
     mutate(file, {
       onSuccess: (data) => {
-        console.log('Upload success, received data:', data);
         // 업로드 성공 시 로컬에서 파일 읽기 (지도시각화용)
         const reader = new FileReader();
         reader.onload = (e) => {
-          try {
-            console.log('FileReader loaded content');
-            const geoJsonData = JSON.parse(e.target?.result as string);
-            console.log('Parsed GeoJSON data:', geoJsonData);
-            
-            addLayer({
-              id: String(data.id), // Ensure id is string if that's what store expects
-              name: file.name,
-              visible: true,
-              data: geoJsonData,
-              analysis: data
-            });
-            console.log('addLayer called successfully');
-          } catch (err) {
-            console.error('Error in FileReader onload:', err);
-          }
+          const geoJsonData = JSON.parse(e.target?.result as string);
+          addLayer({
+            id: data.file_id,
+            name: file.name,
+            visible: true,
+            data: geoJsonData,
+            analysis: data
+          });
         };
-        reader.onerror = (err) => console.error('FileReader error:', err);
         reader.readAsText(file);
       },
       onError: (error) => {
-        console.error('Upload mutation error:', error);
         alert(`업로드 실패: ${error.message}`);
       }
     });

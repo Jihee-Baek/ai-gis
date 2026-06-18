@@ -2,79 +2,80 @@
   "pages": [
     {
       "name": "MainViewerPage",
-      "description": "지도 시각화, 파일 업로드, 공간 분석 결과 확인이 통합된 단일 페이지 대시보드"
+      "description": "지도 시각화, 파일 업로드, 레이어 관리 및 속성 조회가 통합된 단일 페이지 대시보드입니다. 전체적인 레이아웃과 상태 조율을 담당합니다."
     }
   ],
   "components": [
     {
       "name": "MapContainer",
-      "description": "Leaflet 기반의 핵심 지도 컴포넌트로 GeoJSON 레이어 렌더링 및 인터랙션 처리"
+      "description": "Leaflet 라이브러리를 사용하여 GeoJSON 레이어를 렌더링하고, 객체 클릭 등 지도 상호작용을 처리하는 핵심 지도 컴포넌트입니다."
     },
     {
       "name": "FileUploader",
-      "description": "GeoJSON 파일을 드래그 앤 드롭하거나 탐색기에서 선택하여 업로드하는 인터페이스"
+      "description": "GeoJSON 파일을 드래그 앤 드롭하거나 탐색기에서 선택하여 서버로 업로드하고 공간 분석을 요청하는 인터페이스입니다."
     },
     {
       "name": "LayerSidebar",
-      "description": "업로드된 데이터 레이어 목록 관리 및 분석 결과(면적 등) 요약 정보 표시"
+      "description": "활성 레이어 목록을 표시하고, 가시성 토글, 레이어 삭제 및 객체별 공간 분석 요약 정보를 제공하는 사이드바입니다."
     },
     {
       "name": "PropertyInspector",
-      "description": "지도에서 선택된 객체의 속성(Attributes) 정보를 표 형식으로 보여주는 패널"
+      "description": "지도에서 선택된 지리 객체의 상세 속성(Properties) 정보를 표 형식으로 보여주는 패널입니다."
     },
     {
       "name": "AnalysisCard",
-      "description": "폴리곤 면적 계산 결과 등 분석 수치를 시각적으로 강조하여 보여주는 카드 컴포넌트"
+      "description": "공간 분석 결과(면적, 평수 등)를 시각적으로 명확하게 전달하기 위한 UI 컴포넌트입니다."
     },
     {
       "name": "LoadingOverlay",
-      "description": "파일 업로드 및 서버 분석 진행 중 사용자에게 진행 상태를 알리는 대기 화면"
+      "description": "파일 업로드 및 서버 분석 프로세스가 진행 중일 때 사용자에게 로딩 상태를 알리는 전면 오버레이 컴포넌트입니다."
     }
   ],
   "routes": [
     {
       "path": "/",
       "component": "MainViewerPage",
-      "description": "서비스 메인 화면"
+      "description": "애플리케이션의 기본 진입점으로 메인 뷰어 페이지를 렌더링합니다."
     }
   ],
   "stores": [
     {
       "name": "useMapStore",
-      "description": "지도 줌 레벨, 중심 좌표, 활성 레이어 목록 및 가시성 상태 관리"
+      "description": "지도의 줌 레벨, 중심 좌표, 그리고 업로드된 레이어 정보(가시성, 분석 결과 포함)를 관리하는 Zustand 스토어입니다."
     },
     {
       "name": "useFeatureStore",
-      "description": "현재 선택된 지리 객체 정보 및 속성 데이터 상태 관리"
+      "description": "사용자가 선택하거나 마우스를 올린 특정 지리 객체(Feature)의 상태를 관리하는 Zustand 스토어입니다."
     }
   ],
   "api_hooks": [
     {
       "name": "useUploadGeoJson",
-      "description": "GeoJSON 파일을 서버로 전송하고 분석 결과를 받아오는 mutation 훅"
+      "description": "파일 업로드 API를 호출하여 GeoJSON을 서버에 등록하고 분석 결과를 받는 React Query Mutation 훅입니다."
     },
     {
       "name": "useGetSpatialAnalysis",
-      "description": "특정 파일 식별자에 대한 상세 분석 데이터를 조회하는 query 훅"
+      "description": "특정 파일 ID를 기반으로 상세 공간 분석 데이터를 서버에서 조회하는 React Query Query 훅입니다."
     }
   ],
   "ui_flow": [
-    "사용자가 브라우저에서 서비스 접속",
-    "FileUploader를 통해 GeoJSON 파일 업로드",
-    "LoadingOverlay 노출과 동시에 백엔드 API 호출",
-    "업로드 완료 후 MapContainer에 데이터 시각화 및 지점 자동 이동",
-    "LayerSidebar에 분석 요약 정보(면적 등) 업데이트",
-    "지도 상의 객체 클릭 시 PropertyInspector를 통해 상세 속성 조회"
+    "사용자가 브라우저에서 메인 페이지에 접속합니다.",
+    "FileUploader를 통해 GeoJSON 파일을 드래그 앤 드롭으로 업로드합니다.",
+    "업로드 중에는 LoadingOverlay가 활성화되어 분석 중임을 알립니다.",
+    "업로드가 완료되면 서버로부터 분석 결과를 수신하고, useMapStore를 통해 레이어 목록에 추가됩니다.",
+    "지도(MapContainer)에 업로드된 데이터가 시각화되며 해당 영역으로 지도가 이동합니다.",
+    "LayerSidebar에서 레이어별 면적(㎡, 평) 정보를 확인하고 가시성을 제어합니다.",
+    "지도 상의 특정 객체를 클릭하면 PropertyInspector에 상세 속성이 노출됩니다."
   ],
-  "state_management_strategy": "서버 상태는 React Query를 사용하여 캐싱 및 동기화하고, UI의 전역 상태(지도 설정, 사이드바 개폐 등)는 Zustand를 사용하여 가볍게 유지함",
+  "state_management_strategy": "UI의 인터랙티브한 전역 상태(지도 설정, 레이어 가시성 등)는 Zustand를 사용하여 관리하며, 서버 데이터(분석 결과)는 React Query를 사용하여 캐싱 및 동기화를 수행합니다.",
   "performance_considerations": [
-    "대용량 GeoJSON 처리를 위해 Leaflet의 Canvas 렌더러 사용 권장",
-    "복잡한 지리 연산 로직은 Web Worker를 활용하여 메인 스레드 부하 방지",
-    "지도 레이어 및 분석 패널의 지연 로딩(Lazy Loading) 적용"
+    "React.memo를 활용하여 복잡한 GIS UI 컴포넌트의 불필요한 리렌더링을 방지합니다.",
+    "Leaflet의 FeatureGroup 및 GeoJSON 레이어 관리 최적화를 통해 지도 성능을 유지합니다.",
+    "사이드바의 대량 분석 결과 표시 시 효율적인 리스트 렌더링을 고려합니다."
   ],
   "accessibility_considerations": [
-    "파일 업로드 영역에 대한 키보드 포커스 및 엔터키 지원",
-    "지도 컨트롤 및 버튼에 적절한 ARIA 레이블 할당",
-    "색맹 사용자를 고려한 지도 데이터 레이어의 대비 및 패턴 지원"
+    "파일 업로드 영역 및 버튼에 대해 설명적인 텍스트 레이블과 ARIA 속성을 제공합니다.",
+    "지도 컨트롤 및 액션 버튼에 대한 명확한 시각적 피드백을 지원합니다.",
+    "고대비 색상 및 적절한 폰트 크기를 통해 시각적 가독성을 확보합니다."
   ]
 }

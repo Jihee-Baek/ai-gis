@@ -18,6 +18,17 @@ def architect_node(state):
     output_contract = PromptLoader.load("shared/output_contract.md")
     schema = PromptLoader.load("schema/architecture.schema.json")
 
+    existing_arch = JsonLoader.load("outputs/architecture.json")
+    existing_content_prompt = ""
+    if existing_arch:
+        existing_content_prompt = f"""
+# Existing Architecture
+기존에 작성된 아키텍처 설계 내용입니다. 이 내용을 바탕으로 새로운 PRD 요구사항을 반영하여 업데이트하세요.
+기존에 만족스러운 부분은 유지하고, 변경이 필요한 부분만 수정하거나 새로운 내용을 추가하세요.
+
+{existing_arch}
+"""
+
     prompt = f"""
 {system}
 
@@ -27,8 +38,15 @@ def architect_node(state):
 
 {output_contract}
 
+{existing_content_prompt}
+
 # PRD
 {json.dumps(prd, ensure_ascii=False, indent=2)}
+
+# User Request
+사용자의 새로운 요청사항입니다.
+
+{state["user_request"]}
 
 # Output Schema
 {schema}

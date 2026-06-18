@@ -21,6 +21,17 @@ def reviewer_node(state):
     output_contract = PromptLoader.load("shared/output_contract.md")
     schema = PromptLoader.load("schema/review.schema.json")
 
+    existing_review = JsonLoader.load("outputs/reviewer.json")
+    existing_content_prompt = ""
+    if existing_review:
+        existing_content_prompt = f"""
+# Existing Review
+기존에 작성된 리뷰 내용입니다. 이 내용을 바탕으로 새로운 설계 변경사항을 반영하여 업데이트하세요.
+기존에 지적된 사항이 해결되었는지 확인하고, 새로운 설계에 따른 추가 리뷰를 작성하세요.
+
+{existing_review}
+"""
+
     prompt = f"""
 {system}
 
@@ -29,6 +40,8 @@ def reviewer_node(state):
 {language}
 
 {output_contract}
+
+{existing_content_prompt}
 
 # PRD
 {json.dumps(prd, ensure_ascii=False, indent=2)}
@@ -41,6 +54,11 @@ def reviewer_node(state):
 
 # Frontend
 {json.dumps(frontend, ensure_ascii=False, indent=2)}
+
+# User Request
+사용자의 새로운 요청사항입니다.
+
+{state["user_request"]}
 
 # Output Schema
 {schema}

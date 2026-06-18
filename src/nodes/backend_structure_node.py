@@ -19,6 +19,17 @@ def backend_structure_node(state):
     output_contract = PromptLoader.load("shared/output_contract.md")
     schema = PromptLoader.load("schema/backend_structure.schema.json")
 
+    existing_structure = JsonLoader.load("outputs/backend_structure.json")
+    existing_content_prompt = ""
+    if existing_structure:
+        existing_content_prompt = f"""
+# Existing Backend Structure
+기존에 작성된 백엔드 구조 설계 내용입니다. 이 내용을 바탕으로 새로운 설계 변경사항을 반영하여 업데이트하세요.
+기존에 만족스러운 부분은 유지하고, 변경이 필요한 부분만 수정하거나 새로운 내용을 추가하세요.
+
+{existing_structure}
+"""
+
     prompt = f"""
 {system}
 
@@ -27,6 +38,8 @@ def backend_structure_node(state):
 {language}
 
 {output_contract}
+
+{existing_content_prompt}
 
 Read the following files:
 
@@ -38,6 +51,11 @@ Read the following files:
 
 # Backend_design
 {json.dumps(backend_design, ensure_ascii=False, indent=2)}
+
+# User Request
+사용자의 새로운 요청사항입니다.
+
+{state["user_request"]}
 
 # Output Schema
 {schema}

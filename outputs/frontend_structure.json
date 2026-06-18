@@ -21,7 +21,7 @@
     },
     {
       "path": "src/features",
-      "purpose": "기능별(Map, Upload, Analysis 등) 도메인 로직과 전용 컴포넌트를 관리하는 Feature-Based 구조의 핵심 폴더입니다."
+      "purpose": "기능별 도메인 로직과 전용 컴포넌트를 관리하는 Feature-Based 구조의 핵심 폴더입니다."
     },
     {
       "path": "src/hooks",
@@ -66,24 +66,18 @@
         "FileUploader",
         "LayerSidebar",
         "PropertyInspector",
-        "AnalysisCard",
         "LoadingOverlay"
       ],
       "used_hooks": [
-        "useUploadGeoJson",
-        "useGetSpatialAnalysis"
-      ],
-      "used_stores": [
-        "useMapStore",
-        "useFeatureStore"
+        "useUploadGeoJson"
       ],
       "dependencies": [
         "src/features/map/components/MapContainer.tsx",
         "src/features/upload/components/FileUploader.tsx",
         "src/features/sidebar/components/LayerSidebar.tsx",
         "src/features/inspector/components/PropertyInspector.tsx",
-        "src/features/analysis/components/AnalysisCard.tsx",
-        "src/components/common/LoadingOverlay.tsx"
+        "src/components/common/LoadingOverlay.tsx",
+        "src/hooks/mutations/useUploadGeoJson.ts"
       ],
       "exported_symbols": [
         {
@@ -91,10 +85,7 @@
           "type": "functional_component",
           "purpose": "애플리케이션의 메인 뷰어 레이아웃을 구성하고 상태를 조율합니다.",
           "used_hooks": [
-            "useUploadGeoJson",
-            "useGetSpatialAnalysis",
-            "useMapStore",
-            "useFeatureStore"
+            "useUploadGeoJson"
           ]
         }
       ]
@@ -118,7 +109,7 @@
           "purpose": "GeoJSON 레이어 렌더링, 줌/팬 인터랙션, 객체 클릭 이벤트를 처리합니다.",
           "used_hooks": [
             "useEffect",
-            "useCallback"
+            "useRef"
           ]
         }
       ]
@@ -130,16 +121,22 @@
       "used_hooks": [
         "useUploadGeoJson"
       ],
+      "used_stores": [
+        "useMapStore"
+      ],
       "dependencies": [
-        "src/hooks/mutations/useUploadGeoJson.ts"
+        "src/hooks/mutations/useUploadGeoJson.ts",
+        "src/stores/mapStore.ts"
       ],
       "exported_symbols": [
         {
           "name": "FileUploader",
           "type": "functional_component",
-          "purpose": "사용자로부터 GeoJSON 파일을 입력받아 서버로 전송하는 기능을 담당합니다.",
+          "purpose": "사용자로부터 GeoJSON 파일을 입력받아 서버로 전송하고 지도를 업데이트합니다.",
           "used_hooks": [
-            "useUploadGeoJson"
+            "useUploadGeoJson",
+            "useCallback",
+            "useRef"
           ]
         }
       ]
@@ -147,7 +144,7 @@
     {
       "path": "src/features/sidebar/components/LayerSidebar.tsx",
       "type": "component",
-      "purpose": "업로드된 레이어 목록 및 분석 요약 정보 표시",
+      "purpose": "업로드된 레이어 목록 및 분석 요약 정보 표시 사이드바",
       "used_stores": [
         "useMapStore"
       ],
@@ -253,7 +250,7 @@
             },
             {
               "name": "layers",
-              "type": "Layer[]"
+              "type": "LayerInfo[]"
             }
           ],
           "actions": [
@@ -286,6 +283,7 @@
           ],
           "actions": [
             "setSelectedFeature",
+            "setHoveredFeature",
             "clearSelection"
           ]
         }
@@ -336,6 +334,11 @@
           "name": "LayerInfo",
           "definition_type": "interface",
           "description": "지도 레이어의 메타데이터 및 상태 정보"
+        },
+        {
+          "name": "GeoJSONFeature",
+          "definition_type": "type_alias",
+          "description": "GeoJSON Feature 타입 확장"
         }
       ]
     },

@@ -21,6 +21,17 @@ def devops_node(state):
     output_contract = PromptLoader.load("shared/output_contract.md")
     schema = PromptLoader.load("schema/devops_plan.schema.json")
 
+    existing_plan = JsonLoader.load("outputs/devops_plan.json")
+    existing_content_prompt = ""
+    if existing_plan:
+        existing_content_prompt = f"""
+# Existing DevOps Plan
+기존에 수립된 DevOps 계획 내용입니다. 이 내용을 바탕으로 새로운 설계 및 리뷰 결과를 반영하여 업데이트하세요.
+기존에 적절하게 수립된 절차는 유지하고, 변경사항에 따라 수정이 필요한 부분만 업데이트하세요.
+
+{existing_plan}
+"""
+
     prompt = f"""
 {system}
 
@@ -29,6 +40,8 @@ def devops_node(state):
 {language}
 
 {output_contract}
+
+{existing_content_prompt}
 
 # PRD
 {json.dumps(prd, ensure_ascii=False, indent=2)}
@@ -44,6 +57,11 @@ def devops_node(state):
 
 # Reviewer
 {json.dumps(reviewer, ensure_ascii=False, indent=2)}
+
+# User Request
+사용자의 새로운 요청사항입니다.
+
+{state["user_request"]}
 
 # Output Schema
 {schema}

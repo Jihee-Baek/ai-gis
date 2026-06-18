@@ -13,3 +13,5 @@ class ProjectState(TypedDict):
     reviewer_path: Optional[dict]
     devops_plan_path: Optional[dict]
     test_plan_path: Optional[dict]
+    analysis_report: Optional[dict]
+    sync_status: bool

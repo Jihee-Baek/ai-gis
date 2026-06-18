@@ -12,17 +12,25 @@ class OutputWriter:
         # 데이터 문자열 예외 처리
         if isinstance(data, str):
             print("===== BEFORE LOADS =====")
-            print(data[:100])
+            
+            # 마크다운 코드 블록 제거
+            clean_data = data.strip()
+            if clean_data.startswith("```"):
+                lines = clean_data.split("\n")
+                if lines[0].startswith("```"):
+                    lines = lines[1:]
+                if lines[-1].startswith("```"):
+                    lines = lines[:-1]
+                clean_data = "\n".join(lines).strip()
 
             try:
-                data = json.loads(data)
-
+                data = json.loads(clean_data)
                 print("===== AFTER LOADS =====")
-                print(type(data))
-
             except Exception as e:
                 print("===== LOADS FAIL =====")
                 print(e)
+                # 파싱 실패 시 원본 문자열이라도 저장 시도 (또는 에러 처리)
+
 
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
